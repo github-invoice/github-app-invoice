@@ -16,13 +16,13 @@ async function createFile(filePath, fileContent){
     await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
       owner: owner,
       repo: repo,
-      path: 'test2.txt',
+      path: filePath,
       message: 'my commit message',
       committer: {
         name: 'kenyhenry',
         email: 'henry,keny@outlook.fr'
       },
-      content: 'bXkgbmV3IGZpbGUgY29udGVudHM=',
+      content: fileContent,
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
       }
@@ -44,6 +44,25 @@ async function getSha(filePath){
   });
 
 }
+
+app.post('/webhook', async (req, res) => {
+  const { installation } = req.body;
+
+  if (req.headers['x-github-event'] === 'installation' && req.body.action === 'created') {
+    const installationId = installation.id;
+    const repositoriesAdded = installation.repositories_added;
+
+    for (const repository of repositoriesAdded) {
+      const repositoryName = repository.full_name;
+      const path = 'path/to/file.txt';
+      const content = 'This is the content of the file.';
+      createFile(path, content);
+    }
+  }
+
+  res.status(200).end();
+});
+
 
 app.post('/webhook', express.json({type: 'application/json'}), (request, response) => {
 
