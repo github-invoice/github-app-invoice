@@ -1,6 +1,49 @@
+const { Octokit } = require('@octokit/rest');
 const express = require('express');
 
+const octokit = new Octokit({
+  auth: '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',
+});
+
 const app = express();
+
+const owner = 'github-invoice';
+const repo = 'test-repo';
+const branch = 'main';
+
+async function createFile(filePath, fileContent){
+  try {
+    await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+      owner: owner,
+      repo: repo,
+      path: 'test2.txt',
+      message: 'my commit message',
+      committer: {
+        name: 'kenyhenry',
+        email: 'henry,keny@outlook.fr'
+      },
+      content: 'bXkgbmV3IGZpbGUgY29udGVudHM=',
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    });
+  }catch (error){
+    console.log(error.message);
+  }
+}
+
+async function getSha(filePath){
+  octokit.repos.getContent({
+    owner,
+    repo,
+    filePath
+  }).then(response => {
+    console.log(response.data.sha);
+  }).catch(error => {
+    console.error(error);
+  });
+
+}
 
 app.post('/webhook', express.json({type: 'application/json'}), (request, response) => {
 
