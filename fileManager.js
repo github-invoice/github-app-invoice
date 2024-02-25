@@ -1,21 +1,22 @@
-class FileManager {
-  constructor() {
-    this.owner = '';
-    this.repo = '';
-    this.sender = '';
-    this.sender_mail = '';
+export class FileManager {
+  constructor(octokit, owner, repo, sender, senderMail) {
+    this.octokit = octokit;
+    this.owner = owner;
+    this.repo = repo;
+    this.sender = sender;
+    this.senderMail = senderMail;
   }
 
   async createFile(filePath, fileContent, commitMessage){
     try {
-      await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+      await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
         owner: this.owner,
         repo: this.repo,
         path: filePath,
         message: commitMessage,
         committer: {
           name: this.sender,
-          email: this.sender_mail
+          email: this.senderMail
         },
         content: fileContent,
         headers: {
@@ -27,16 +28,17 @@ class FileManager {
     }
   }
 
-  async updateFile(filePath, fileContent, sha, commitMessage){
+  async updateFile(filePath, fileContent, commitMessage, sender, senderMail){
     try {
-      await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+        sha = this.getSha(filePath);
+      await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
         owner: this.owner,
         repo: this.repo,
         path: filePath,
         message: commitMessage,
         committer: {
           name: this.sender,
-          email: this.sender_mail
+          email: this.senderMail
         },
         sha: sha,
         content: fileContent,
@@ -49,6 +51,22 @@ class FileManager {
     }
   }
 
+  async getFile(filePath){
+    try {
+        const response = await this.octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+            owner: this.owner,
+            repo: this.repo,
+            path: filePath,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28'
+            }
+        });
+        const content = Buffer.from(response.data.content, 'base64').toString('utf-8');
+        return content;
+    }catch (error){
+      console.log(error.message);
+    }
+  }
 
   async getSha(filePath){
     octokit.repos.getContent({
