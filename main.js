@@ -42,12 +42,57 @@ async function getSha(filePath){
   }).catch(error => {
     console.error(error);
   });
+}
 
+async function updateFile(filePath, fileContent, sha){
+  try {
+    await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+      owner: owner,
+      repo: repo,
+      path: filePath,
+      message: 'my commit message',
+      committer: {
+        name: 'kenyhenry',
+        email: 'henry,keny@outlook.fr'
+      },
+      sha: sha,
+      content: fileContent,
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    });
+  }catch (error){
+    console.log(error.message);
+  }
+}
+
+async function getColumnProject(project_id){
+    const response = await octokit.projects.listColumns({
+      project_id: project_id
+    }).then(response => {
+      const columns = response.data;
+      columns.forEach(column => {
+        console.log(column.name);
+      });
+    }).catch(error => {
+      console.error(error);
+    });
+}
+
+async function createColumnProject(name){
+  try {
+    const response = await octokit.projects.createColumn({
+      project_id: 1,
+      name: name
+    });
+    console.log(response);
+  }catch (error){
+    console.log(error.message);
+  }
 }
 
 app.post('/webhook', async (req, res) => {
   const { installation } = req.body;
-
   if (req.headers['x-github-event'] === 'installation' && req.body.action === 'created') {
     const installationId = installation.id;
     const repositoriesAdded = installation.repositories_added;
@@ -59,7 +104,6 @@ app.post('/webhook', async (req, res) => {
       createFile(path, content);
     }
   }
-
   res.status(200).end();
 });
 
@@ -69,7 +113,7 @@ app.post('/webhook', express.json({type: 'application/json'}), (request, respons
   response.status(202).send('Accepted');
 
   const githubEvent = request.headers['x-github-event'];
-
+  createColumnProject('payed');
   if (githubEvent === 'issues') {
     const data = request.body;
     const action = data.action;
