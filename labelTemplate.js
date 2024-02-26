@@ -12,6 +12,9 @@ export class LabelTemplate{
         labels = this.projectManager.getProjectLabels();
         data = {}
         data['currency'] = 'USD';
+        data['invoiceColumn'] = 'done';
+        data['quoteColumn'] = 'todo';
+        data['payedColumn'] = 'payed';
         labels.forEach(label => {
             data[label] = {
                 price: 400,

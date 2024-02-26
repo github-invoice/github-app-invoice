@@ -1,7 +1,9 @@
 export class ProjectManager{
-    constructor(octokit, projectId = 0){
+    constructor(octokit, owner, repo, projectId = 1){
         this.octokit = octokit;
         this.projectId = projectId;
+        this.owner = owner;
+        this.repo = repo;
     }
 
     async createProject(name){
@@ -17,14 +19,35 @@ export class ProjectManager{
         }
     }
 
+    async hasProjects() {
+      try {
+        const { data: projects } = await octokit.projects.listForRepo({
+          owner:this.owner,
+          repo:this.repo
+        });
+        if (projects.length > 0) {
+          console.log('Repository has projects');
+          return true;
+        } else {
+          console.log('Repository has no projects');
+          return false;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        throw error;
+      }
+    }
+
     async getColumnProject(){
+        columns = []
         await this.octokit.projects.listColumns({
           projectId: this.projectId
         }).then(response => {
           const columns = response.data;
           columns.forEach(column => {
-            console.log(column.name);
+            columns.push({id:column.id, name:column.name});
           });
+          return columns;
         }).catch(error => {
           console.error(error);
         });
@@ -54,5 +77,31 @@ export class ProjectManager{
           }).catch(error => {
             console.error(error);
           });
+    }
+
+    async getCardsInColumn(owner, repo, columnId) {
+      try {
+        const { data: cards } = await octokit.projects.listCards({
+          column_id: columnId
+        });
+        return cards;
+      } catch (error) {
+        console.error('Error getting cards in column:', error);
+        throw error;
+      }
+    }
+
+    async moveCardToColumn(cardId, columnId) {
+      try {
+        const response = await octokit.projects.moveCard({
+          card_id: cardId,
+          position: 'top', // You can specify 'top' or 'bottom' for the position within the column
+          column_id: columnId
+        });
+        console.log('Card moved successfully:', response.data);
+      } catch (error) {
+        console.error('Error moving card:', error);
+        throw error;
+      }
     }
 }

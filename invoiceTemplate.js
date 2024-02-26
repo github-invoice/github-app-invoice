@@ -1,17 +1,11 @@
-import { FileManager } from './fileManager.js';
-
-export class QuoteTemplate{
+export class InvoiceTemplate{
     logoUrl = '';
     companyName = 'githubInvoice';
     projectName = 'undefined';
 
-    constructor(){
-        this.owner;
-        this.repo;
-        this.sender;
-        this.senderMail;
-        this.fileManager = new FileManager();
-        this.fileName = 'quoteTemplate.json';
+    constructor(fileManager){
+        this.fileManager = fileManager;
+        this.fileName = 'invoiceTemplate.json';
         this.filePath = 'github_invoice/';
     }
 

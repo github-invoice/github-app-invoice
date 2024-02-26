@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+<title>Invoice</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  .invoice {
+    /* max-width: 800px; */
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  .invoice .details {
+    /* margin-bottom: 20px; */
+  }
+  .invoice table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  .invoice table, .invoice th, .invoice td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
+  .invoice th {
+    background-color: #f2f2f2;
+  }
+  .invoice .total {
+    text-align: right;
+    font-weight: bold;
+  }
+  #company {
+    display: flex;
+  }
+</style>
+</head>
+<body>
+
+<div class="invoice">
+  <div class="header">
+    <h1 id="type">Invoice</h1>
+    <div id="company">
+      <img src="https://github.com/github-invoice/github-app-invoice/blob/main/github_invoice_logo.png" alt="Github Logo" width="100" height="100">
+      <h2 id="company">Github invoice</h2>
+    </div>
+    <h2 id="clientName">Client</h2>
+    <h3 id="project">Invoice</h3>
+    <h4 id="address">address</h4>
+    <h4 id="email">email</h4>
+  </div>
+  <div class="details">
+    <p><strong>Invoice Number:</strong> INV-001</p>
+    <p><strong>Date:</strong> 2024-02-26</p>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody
