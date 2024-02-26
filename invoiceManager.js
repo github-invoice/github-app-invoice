@@ -1,9 +1,9 @@
 const fs = require('fs');
 const cheerio = require('cheerio');
-import { InvoiceTemplate } from './invoiceTemplate';
-import { LabelTemplate } from './labelTemplate';
+const InvoiceTemplate = require('./invoiceTemplate');
+const LabelTemplate = require('./labelTemplate');
 
-export class InvoiceManager{
+class InvoiceManager{
     constructor(fileManager, projectManager){
         this.fileManager = fileManager;
         this.projectManager = projectManager;

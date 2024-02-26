@@ -1,4 +1,4 @@
-export class InvoiceTemplate{
+class InvoiceTemplate{
     logoUrl = '';
     companyName = 'githubInvoice';
     projectName = 'undefined';

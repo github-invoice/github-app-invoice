@@ -1,8 +1,8 @@
 const { Octokit } = require('@octokit/rest');
 const express = require('express');
-import { ProjectManager } from './projectManager';
-import { FileManager } from './fileManager';
-import { InvoiceManager } from './invoiceManager';
+const InvoiceTemplate = require('./invoiceTemplate');
+const FileManager = require('./fileManager');
+const InvoiceManager = require('./invoiceManager');
 
 const octokit = new Octokit({
   auth: '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',

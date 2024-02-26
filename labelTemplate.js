@@ -1,6 +1,4 @@
-import { ProjectManager } from "./projectManager";
-
-export class LabelTemplate{
+class LabelTemplate{
     constructor(fileManager, projectManager){
         this.projectManager = projectManager;
         this.fileManager = fileManager;

@@ -1,4 +1,4 @@
-export class ProjectManager{
+class ProjectManager{
     constructor(octokit, owner, repo, projectId = 1){
         this.octokit = octokit;
         this.projectId = projectId;
