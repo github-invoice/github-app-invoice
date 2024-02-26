@@ -23,8 +23,10 @@ class FileManager {
           'X-GitHub-Api-Version': '2022-11-28'
         }
       });
+      return true;
     }catch (error){
       console.log(error.message);
+      return false;
     }
   }
 
@@ -69,7 +71,7 @@ class FileManager {
   }
 
   async getSha(filePath){
-    octokit.repos.getContent({
+    this.octokit.repos.getContent({
       owner: this.owner,
       repo: this.repo,
       filePath
@@ -82,3 +84,5 @@ class FileManager {
   }
 
 }
+
+module.exports = FileManager;

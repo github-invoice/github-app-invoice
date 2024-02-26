@@ -3,10 +3,23 @@ const express = require('express');
 const InvoiceTemplate = require('./invoiceTemplate');
 const FileManager = require('./fileManager');
 const InvoiceManager = require('./invoiceManager');
+const ProjectManager = require('./projectManager');
 
 const octokit = new Octokit({
-  auth: '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',
+  auth: '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',
 });
+
+// test
+async function fetchUserInfo() {
+  try {
+    const { data } = await octokit.users.getAuthenticated();
+    console.log('Authenticated user:', data);
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+}
+
+fetchUserInfo();
 
 const app = express();
 
@@ -28,6 +41,8 @@ app.post('/webhook', express.json({type: 'application/json'}), (request, respons
   const owner = payload.repository.owner.login;
   const repo = payload.repository.name;
   const branch = payload.repository.default_branch;
+
+  console.log(request);
 
   switch (githubEvent) {
 

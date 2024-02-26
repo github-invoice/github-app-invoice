@@ -14,42 +14,45 @@ class ProjectManager{
             name: name
           });
           console.log(response);
+          return true;
         }catch (error){
           console.log(error.message);
+          throw error;
         }
     }
 
     async hasProjects() {
       try {
-        const { data: projects } = await octokit.projects.listForRepo({
+        const projects = await this.octokit.projects.listForRepo({
           owner:this.owner,
           repo:this.repo
+          // org: this.owner
         });
+        console.log(projects)
         if (projects.length > 0) {
-          console.log('Repository has projects');
           return true;
         } else {
-          console.log('Repository has no projects');
           return false;
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error:', error.message);
         throw error;
       }
     }
 
     async getColumnProject(){
-        columns = []
+        let columns = []
         await this.octokit.projects.listColumns({
           projectId: this.projectId
         }).then(response => {
-          const columns = response.data;
+          columns = response.data;
           columns.forEach(column => {
             columns.push({id:column.id, name:column.name});
           });
           return columns;
         }).catch(error => {
           console.error(error);
+          throw error;
         });
     }
 
@@ -60,8 +63,10 @@ class ProjectManager{
           name: name
         });
         console.log(response);
+        return true;
       }catch (error){
         console.log(error.message);
+        throw error;
       }
     }
 
@@ -74,14 +79,16 @@ class ProjectManager{
             labels.forEach(label => {
               labels.push(label.name);
             });
+            return labels;
           }).catch(error => {
             console.error(error);
+            throw error;
           });
     }
 
     async getCardsInColumn(owner, repo, columnId) {
       try {
-        const { data: cards } = await octokit.projects.listCards({
+        const { data: cards } = await this.octokit.projects.listCards({
           column_id: columnId
         });
         return cards;
@@ -93,15 +100,18 @@ class ProjectManager{
 
     async moveCardToColumn(cardId, columnId) {
       try {
-        const response = await octokit.projects.moveCard({
+        const response = await this.octokit.projects.moveCard({
           card_id: cardId,
           position: 'top', // You can specify 'top' or 'bottom' for the position within the column
           column_id: columnId
         });
         console.log('Card moved successfully:', response.data);
+        return true;
       } catch (error) {
         console.error('Error moving card:', error);
         throw error;
       }
     }
 }
+
+module.exports = ProjectManager;

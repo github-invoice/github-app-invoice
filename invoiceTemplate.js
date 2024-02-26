@@ -28,3 +28,5 @@ class InvoiceTemplate{
     }
 
 }
+
+module.exports = InvoiceTemplate;

@@ -75,3 +75,5 @@ class InvoiceManager{
         return htmlData;
     }
 }
+
+module.exports = InvoiceManager;

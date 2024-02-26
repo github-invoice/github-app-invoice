@@ -31,3 +31,5 @@ class LabelTemplate{
     }
 
 }
+
+module.exports = LabelTemplate;
