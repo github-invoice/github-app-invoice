@@ -188,7 +188,7 @@ class ProjectManager{
             const fields = projects[i].fields.nodes;
             for(let j = 0; j != fields.length; j++){
               if(fields[j].name == "Status"){
-                columns.append({'fieldId': fields[j].id, 'column':fields[j].options});
+                columns.push({'fieldId': fields[j].id, 'column':fields[j].options});
               }
             }
           }
@@ -210,7 +210,7 @@ class ProjectManager{
         const query = `
         query GetAllProjectV2($owner: String!, $repository: String!) {
           repository(owner: $owner, name: $repository) {
-            projectsV2(first: 100) {
+            projectsV2(first: 5) {
               nodes {
                 id
                 items(first: 100) {
@@ -221,6 +221,13 @@ class ProjectManager{
                         ... on ProjectV2ItemFieldSingleSelectValue{
                           id
                           name
+                        }
+                        ... on ProjectV2ItemFieldLabelValue{
+                          labels(first: 10){
+                            nodes{
+                              name
+                            }
+                          }
                         }
                       }
                     }
@@ -236,15 +243,35 @@ class ProjectManager{
           repository,
         });
         const projects = response.repository.projectsV2.nodes;
-        // console.log(projects[0].items[0].nodes.fielValues);
         for(let i = 0; i != projects.length; i++){
           if(projects[i].id == projectId){
             const fields = projects[i].items.nodes;
             for(let j = 0; j != fields.length; j++){
-              if(fields[j].fieldValues[0].name == columnName){
-                items.append(fields[j].id);
+              let labels = [];
+              let itemId = "";
+              let fieldColumnName = ""
+              if(fields[j].fieldValues){
+                const nodes = fields[j].fieldValues.nodes;
+                for(let k=0; k != nodes.length; k++){
+                  if(nodes[k].id){
+                      itemId = nodes[k].id;
+                      fieldColumnName = nodes[k].name
+                  }
+                  if(nodes[k].labels){
+                    let labelItems = nodes[k].labels.nodes;
+                    for (let l = 0; l != labelItems.length; l++){
+                      labels.push(labelItems[l]);
+                    }
+                  }
+                }
+                items.push({"columnName":fieldColumnName, "itemId":itemId, "labels":labels});
               }
             }
+          }
+        }
+        for(let x=0; x != items.length; x++){
+          if(items[x].columnName != columnName){
+            items.splice(x, 1);
           }
         }
         return items;
@@ -289,23 +316,6 @@ class ProjectManager{
         console.log(error.message);
         throw error;
       }
-    }
-
-
-    async getProjectLabels(){
-        labels = []
-        this.octokit.projects.listLabels({
-            project_id: this.projectId
-          }).then(response => {
-            const labels = response.data;
-            labels.forEach(label => {
-              labels.push(label.name);
-            });
-            return labels;
-          }).catch(error => {
-            console.error(error);
-            throw error;
-          });
     }
 }
 
