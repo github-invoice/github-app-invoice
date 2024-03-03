@@ -200,9 +200,9 @@ class ProjectManager{
       }
     }
 
-    async getAllCardsInColumn(columnId) {
+    async getAllCardsInColumn(columnName) {
       try {
-        let columns = [];
+        let items = [];
         const projectsIds = await this.getProjectsIds();
         const projectId = projectsIds[0].id;
         const owner = this.owner;
@@ -220,6 +220,7 @@ class ProjectManager{
                       nodes {
                         ... on ProjectV2ItemFieldSingleSelectValue{
                           id
+                          name
                         }
                       }
                     }
@@ -236,6 +237,17 @@ class ProjectManager{
         });
         const projects = response.repository.projectsV2.nodes;
         // console.log(projects[0].items[0].nodes.fielValues);
+        for(let i = 0; i != projects.length; i++){
+          if(projects[i].id == projectId){
+            const fields = projects[i].items.nodes;
+            for(let j = 0; j != fields.length; j++){
+              if(fields[j].fieldValues[0].name == columnName){
+                items.append(fields[j].id);
+              }
+            }
+          }
+        }
+        return items;
       }catch (error){
         console.log(error.message);
         throw error;
