@@ -4,9 +4,10 @@ const InvoiceTemplate = require('./invoiceTemplate');
 const FileManager = require('./fileManager');
 const InvoiceManager = require('./invoiceManager');
 const ProjectManager = require('./projectManager');
+const dotenv = require('dotenv');
 
 const octokit = new Octokit({
-  auth: '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',
+    auth: dotenv.config().parsed.GITHUB_TOKEN,
 });
 
 // test
