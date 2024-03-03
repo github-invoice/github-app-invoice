@@ -317,6 +317,37 @@ class ProjectManager{
         throw error;
       }
     }
+
+    async createColumnProject(name){
+      try {
+        const projectsIds = await this.getProjectsIds();
+        const projectId = projectsIds[0].id;
+        const input = {
+          projectId: projectId,
+          name: "github-invoice",
+          dataType: "SINGLE_SELECT",
+          singleSelectOptions: {
+            name: name,
+            description: name,
+            color: "ORANGE"
+          }
+        };
+        const query = `
+        mutation CreateProjectV2Field($input: CreateProjectV2FieldInput!) {
+          createProjectV2Field(input: $input) {
+            clientMutationId
+          }
+        }
+        `;
+        const response  = await this.octokit.graphql(query, {
+          input
+        });
+        return true;
+      }catch (error){
+        console.log(error.message);
+        throw error;
+      }
+    }
 }
 
 module.exports = ProjectManager;
