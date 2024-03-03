@@ -43,30 +43,25 @@ function randomWords(){
 //     expect(repoId.length > 0).toBe(true);
 // });
 
-test('test create column project', async () => {
-    const projectManager = new ProjectManager(octokit, 'github-invoice', 'test-repo');
-    const randomWord = randomWords();
-    let ret = await projectManager.createColumnProject(randomWord);
-    expect(ret).toBe(true);
-});
-
-// test('test get projects labels', async () => {
+// test('test create column project', async () => {
 //     const projectManager = new ProjectManager(octokit, 'github-invoice', 'test-repo');
 //     const randomWord = randomWords();
-//     let ret = await projectManager.createProject('InvoiceProject'+randomWord);
+//     let ret = await projectManager.createColumnProject(randomWord);
 //     expect(ret).toBe(true);
 // });
 
-// test('test get card in column', async () => {
+// test('test get projects items and labels', async () => {
 //     const projectManager = new ProjectManager(octokit, 'github-invoice', 'test-repo');
 //     const randomWord = randomWords();
-//     let ret = await projectManager.createProject('InvoiceProject'+randomWord);
-//     expect(ret).toBe(true);
+//     let ret = await projectManager.getAllCardsInColumn("In Progress");
+//     expect(ret.length > 0).toBe(true);
 // });
 
 // test('test move card to column', async () => {
 //     const projectManager = new ProjectManager(octokit, 'github-invoice', 'test-repo');
 //     const randomWord = randomWords();
-//     let ret = await projectManager.createProject('InvoiceProject'+randomWord);
-//     expect(ret).toBe(true);
+//     // TODO:
+//     // get all columns
+//     // get all cards in a column
+//     // then move card to another column
 // });

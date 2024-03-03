@@ -30,9 +30,24 @@ class FileManager {
     }
   }
 
-  async updateFile(filePath, fileContent, commitMessage, sender, senderMail){
+  async getSha(filePath){
+    try{
+      const {data} = await this.octokit.repos.getContent({
+        owner: this.owner,
+        repo: this.repo,
+        path: filePath
+      });
+      return data.sha;
+    }catch (error) {
+      console.error(error);
+      throw error;
+    };
+  }
+
+  async updateFile(filePath, fileContent, commitMessage){
     try {
-        sha = this.getSha(filePath);
+      let sha = await this.getSha(filePath);
+      let content = Buffer.from(fileContent, 'ascii').toString('base64');
       await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
         owner: this.owner,
         repo: this.repo,
@@ -43,11 +58,12 @@ class FileManager {
           email: this.senderMail
         },
         sha: sha,
-        content: fileContent,
+        content: content,
         headers: {
           'X-GitHub-Api-Version': '2022-11-28'
         }
       });
+      return true;
     }catch (error){
       console.log(error.message);
     }
@@ -67,22 +83,9 @@ class FileManager {
         return content;
     }catch (error){
       console.log(error.message);
+      throw error;
     }
   }
-
-  async getSha(filePath){
-    this.octokit.repos.getContent({
-      owner: this.owner,
-      repo: this.repo,
-      filePath
-    }).then(response => {
-      return response.data.sha;
-    }).catch(error => {
-      console.error(error);
-      return null;
-    });
-  }
-
 }
 
 module.exports = FileManager;

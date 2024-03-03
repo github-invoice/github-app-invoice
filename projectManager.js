@@ -1,3 +1,7 @@
+// graphql url for github
+// https://studio.apollographql.com/public/github/variant/current/schema/reference
+// graphql doc
+// https://docs.github.com/en/graphql/reference
 class ProjectManager{
     constructor(octokit, owner, repo, projectId = 1){
         this.octokit = octokit;
