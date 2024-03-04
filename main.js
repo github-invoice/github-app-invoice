@@ -1,6 +1,7 @@
 const { Octokit } = require('@octokit/rest');
 const express = require('express');
 const InvoiceTemplate = require('./invoiceTemplate');
+const LabelTemplate = require('./labelTemplate');
 const FileManager = require('./fileManager');
 const InvoiceManager = require('./invoiceManager');
 const ProjectManager = require('./projectManager');
@@ -56,7 +57,7 @@ app.post('/webhook', express.json({type: 'application/json'}), (request, respons
         if(projectManager.hasProjects() === false){
           projectManager.createProject('InvoiceProject');
         }
-        projectManager.createColumnProject('payed');
+        projectManager.createColumnProject('pay');
         const labelTemplate = new LabelTemplate(fileManager, projectManager);
         const invoiceTemplate = new InvoiceTemplate(fileManager);
         labelTemplate.createTemplateFile();

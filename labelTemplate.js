@@ -8,15 +8,15 @@ class LabelTemplate{
     async createTemplateFile(){
         try{
             const data = {
-                currency: 'USD',
-                invoiceColumn: 'Done',
-                quoteColumn: 'Todo',
-                payedColumn: 'pay',
-                documentation: 100,
-                bug: 0,
-                enhancement: 300,
-                duplicate: 0,
-                wontfix: 500,
+                'currency': 'USD',
+                'invoiceColumn': 'Done',
+                'quoteColumn': 'Todo',
+                'payedColumn': 'pay',
+                'documentation': 100,
+                'bug': 0,
+                'enhancement': 300,
+                'duplicate': 0,
+                'wontfix': 500,
             }
             const jsonData = JSON.stringify(data, null, 2);
             await this.fileManager.createFile(this.filePath+this.fileName, jsonData, 'Create label template');

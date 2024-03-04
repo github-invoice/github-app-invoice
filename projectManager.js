@@ -139,7 +139,7 @@ class ProjectManager{
 
     async getColumnProject(){
       try {
-        columns = [];
+        let columns = [];
         const projectsIds = await this.getProjectsIds();
         const projectId = projectsIds[0].id;
         const owner = this.owner;
@@ -186,7 +186,6 @@ class ProjectManager{
           repository,
         });
         const projects = response.repository.projectsV2.nodes;
-        console.log(projects[0].items);
         for(let i = 0; i != projects.length; i++){
           if(projects[i].id == projectId){
             const fields = projects[i].fields.nodes;
