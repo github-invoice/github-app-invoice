@@ -1,30 +1,40 @@
 class InvoiceTemplate{
-    logoUrl = '';
-    companyName = 'githubInvoice';
-    projectName = 'undefined';
-
     constructor(fileManager){
         this.fileManager = fileManager;
         this.fileName = 'invoiceTemplate.json';
         this.filePath = 'github_invoice/';
     }
 
-    createTemplateFile(){
-        data = {
-            logoUrl: this.logoUrl,
-            companyName: this.companyName,
-            projectName: this.projectName
+    async createTemplateFile(){
+        try{
+            const data = {
+                logoUrl: "https://github.com/github-invoice/github-app-invoice/blob/b259764fe84e0618ec1dd45c7d1eaedeea770b3c/github_invoice_logo.png?raw=true",
+                companyName: "githubInvoice",
+                projectName: "undefined"
+            }
+            const jsonData = JSON.stringify(data, null, 2);
+            await this.fileManager.createFile(this.filePath+this.fileName, jsonData, 'Create quote template');
+            return true;
+        }catch(e){
+            console.log(e);
+            throw e;
         }
-        const jsonData = JSON.stringify(data, null, 2);
-        this.fileManager.createFile(this.owner, this.repo, this.filePath + this.fileName, jsonData, 'Create quote template');
     }
 
-    loadTemplateFile(){
-        content = this.fileManager.getFile(this.owner, this.repo, this.filePath + this.fileName);
-        const jsonData = JSON.parse(content);
-        this.logoUrl = jsonData.logoUrl;
-        this.companyName = jsonData.companyName;
-        this.projectName = jsonData.projectName;
+    async loadTemplateFile(){
+        try{
+            const content = await this.fileManager.getFile(this.filePath + this.fileName);
+            const jsonData = JSON.parse(content);
+            const data = {
+                logoUrl: jsonData.logoUrl,
+                companyName: jsonData.companyName,
+                projectName: jsonData.projectName
+            }
+            return data;
+        }catch(e){
+            console.log(e);
+            throw e;
+        }
     }
 
 }

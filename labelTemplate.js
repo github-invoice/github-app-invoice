@@ -1,33 +1,41 @@
 class LabelTemplate{
-    constructor(fileManager, projectManager){
-        this.projectManager = projectManager;
+    constructor(fileManager){
         this.fileManager = fileManager;
         this.fileName = 'labelTemplate.json';
         this.filePath = 'github_invoice/';
     }
 
-    createTemplateFile(){
-        labels = this.projectManager.getProjectLabels();
-        data = {}
-        data['currency'] = 'USD';
-        data['invoiceColumn'] = 'done';
-        data['quoteColumn'] = 'todo';
-        data['payedColumn'] = 'payed';
-        labels.forEach(label => {
-            data[label] = {
-                price: 400,
-                hourPrice: 50,
-                desc: 'This is a description'
+    async createTemplateFile(){
+        try{
+            const data = {
+                currency: 'USD',
+                invoiceColumn: 'Done',
+                quoteColumn: 'Todo',
+                payedColumn: 'pay',
+                documentation: 100,
+                bug: 0,
+                enhancement: 300,
+                duplicate: 0,
+                wontfix: 500,
             }
-        });
-        const jsonData = JSON.stringify(data, null, 2);
-        this.fileManager.createFile(this.owner, this.repo, this.filePath + this.fileName, jsonData, 'Create quote template');
+            const jsonData = JSON.stringify(data, null, 2);
+            await this.fileManager.createFile(this.filePath+this.fileName, jsonData, 'Create label template');
+            return true;
+        }catch(e){
+            console.log(e);
+            throw e;
+        }
     }
 
-    loadTemplateFile(){
-        content = this.fileManager.getFile(this.owner, this.repo, this.filePath + this.fileName);
-        const jsonData = JSON.parse(content);
-        return jsonData;
+    async loadTemplateFile(){
+        try{
+            const content = await this.fileManager.getFile(this.filePath + this.fileName);
+            const jsonData = JSON.parse(content);
+            return jsonData;
+        }catch(e){
+            console.log(e);
+            throw e;
+        }
     }
 
 }

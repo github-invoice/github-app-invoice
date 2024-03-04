@@ -9,6 +9,7 @@ class FileManager {
 
   async createFile(filePath, fileContent, commitMessage){
     try {
+      let content = Buffer.from(fileContent, 'ascii').toString('base64');
       await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
         owner: this.owner,
         repo: this.repo,
@@ -18,7 +19,7 @@ class FileManager {
           name: this.sender,
           email: this.senderMail
         },
-        content: fileContent,
+        content: content,
         headers: {
           'X-GitHub-Api-Version': '2022-11-28'
         }
