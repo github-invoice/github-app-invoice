@@ -44,8 +44,6 @@ app.post('/webhook', express.json({type: 'application/json'}), (request, respons
   const repo = payload.repository.name;
   const branch = payload.repository.default_branch;
 
-  console.log(request);
-
   switch (githubEvent) {
 
     case GithubEvents.installation || GithubEvents.created:

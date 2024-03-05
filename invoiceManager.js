@@ -46,7 +46,7 @@ class InvoiceManager{
         for(let x = 0; x != columns.length; x++){
             for(let y = 0; y != columns[x].column.length; y++){
                 if(columns[x].column[y].name === name){
-                    return columns[x].column[y];
+                    return {"fieldId":columns[x].fieldId, "columnId":columns[x].column[y].id};
                 }
             }
         }
@@ -64,7 +64,7 @@ class InvoiceManager{
         } else if(type === 'invoice'){
             sourceColumn = this.findColumn(columns, labelData.invoiceColumn);
         }
-        const cards = await this.projectManager.getAllCardsInColumn(sourceColumn.id);
+        const cards = await this.projectManager.getAllCardsInColumn(sourceColumn.columnId);
         for(let x = 0; x != cards.length; x++){
             const labels = cards[x].labels
             for(let y = 0; y != labels.length; y++){
@@ -74,7 +74,7 @@ class InvoiceManager{
                     let desc = "description";
                     htmlData += `<tr><td>${labels[y].name}</td><td>${price}</td><td>${hourPrice}</td><td>${desc}</td></tr>`;
                 }
-                // await this.projectManager.moveCardToColumn(cards[x].id, sourceColumn.id);
+                await this.projectManager.moveCardToColumn(payColumn.fieldId, cards[x].itemId, payColumn.columnId);
             }
         }
         return htmlData;

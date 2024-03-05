@@ -257,7 +257,7 @@ class ProjectManager{
                 const nodes = fields[j].fieldValues.nodes;
                 for(let k=0; k != nodes.length; k++){
                   if(nodes[k].id){
-                      itemId = nodes[k].id;
+                      itemId = fields[j].id;
                       fieldColumnName = nodes[k].name
                   }
                   if(nodes[k].labels){
