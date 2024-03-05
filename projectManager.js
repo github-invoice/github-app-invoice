@@ -30,6 +30,7 @@ class ProjectManager{
           owner,
           repository,
         });
+        console.log(data.repository.projectsV2.nodes);
         return data.repository.projectsV2.nodes;
       } catch(error) {
         console.error(error);
@@ -348,6 +349,63 @@ class ProjectManager{
         return true;
       }catch (error){
         console.log(error.message);
+        throw error;
+      }
+    }
+
+    async getLastCommit(){
+      try{
+        const owner = this.owner;
+        const repo = this.repo;
+        const infos = await this.getRepoInfos();
+        const {data} = await this.octokit.request('GET /repos/{owner}/{repo}/branches/{branch}', {
+          owner: owner,
+          repo: repo,
+          branch: infos.default_branch,
+          headers: {
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        })
+        return data.commit.sha;
+      } catch (error){
+        console.log(error);
+        throw error;
+      }
+    }
+
+    async createDedicatedBranch(){
+      try {
+        const repoId = await this.getRepoId();
+        const sha = await this.getLastCommit();
+        const input = {
+          name: "refs/heads/github-invoice",
+          oid: sha,
+          repositoryId: repoId
+        }
+        const query = `
+        mutation  CreateRef($input:  CreateRefInput!) {
+          createRef(input: $input) {
+            clientMutationId
+          }
+        }
+        `;
+        const response  = await this.octokit.graphql(query, {
+          input
+        });
+        return true;
+      }catch (error){
+        console.log(error.message);
+        throw error;
+      }
+    }
+
+    async getRepoInfos(){
+      try {
+        const response = await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}`);
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching default branch:', error);
         throw error;
       }
     }

@@ -56,6 +56,7 @@ app.post('/webhook', express.json({type: 'application/json'}), (request, respons
           projectManager.createProject('InvoiceProject');
         }
         projectManager.createColumnProject('pay');
+        projectManager.createDedicatedBranch('github-invoice');
         const labelTemplate = new LabelTemplate(fileManager, projectManager);
         const invoiceTemplate = new InvoiceTemplate(fileManager);
         labelTemplate.createTemplateFile();

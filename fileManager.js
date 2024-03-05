@@ -15,6 +15,7 @@ class FileManager {
         repo: this.repo,
         path: filePath,
         message: commitMessage,
+        branch: 'github-invoice',
         committer: {
           name: this.sender,
           email: this.senderMail
