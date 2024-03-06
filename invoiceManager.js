@@ -31,6 +31,10 @@ class InvoiceManager{
         $(`#teamAddress`).text(invoiceTemplate.teamAddress);
         $(`#teamEmail`).text(invoiceTemplate.teamEmail);
 
+        $(`#date`).text(new Date().toLocaleDateString());
+        const sha = await this.projectManager.getLastCommit();
+        $(`#invoiceNumber`).text(sha);
+
         $(`#logo`).attr('src', invoiceTemplate.logoUrl);
         let data = '';
         if(type === 'quote'){
