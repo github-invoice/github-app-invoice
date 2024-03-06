@@ -10,6 +10,7 @@ class InvoiceTemplate{
             const data = {
                 logoUrl: "https://github.com/github-invoice/github-app-invoice/blob/b259764fe84e0618ec1dd45c7d1eaedeea770b3c/github_invoice_logo.png?raw=true",
                 companyName: "githubInvoice",
+                tva: "5",
                 // Client
                 clientProject: "personal-website",
                 clientName:  "keet",

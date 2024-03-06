@@ -12,6 +12,17 @@ class InvoiceManager{
         this.labelTemplate = new LabelTemplate(fileManager, projectManager);
     }
 
+    findColumn(columns, name){
+        for(let x = 0; x != columns.length; x++){
+            for(let y = 0; y != columns[x].column.length; y++){
+                if(columns[x].column[y].name === name){
+                    return {"fieldId":columns[x].fieldId, "columnId":columns[x].column[y].id, "columnName":columns[x].column[y].name};
+                }
+            }
+        }
+        return undefined;
+    }
+
     async createInvoice(type){
         // load html
         const html = await fs.promises.readFile('invoiceTemplate.html', 'utf8');
@@ -36,39 +47,10 @@ class InvoiceManager{
         $(`#invoiceNumber`).text(sha);
 
         $(`#logo`).attr('src', invoiceTemplate.logoUrl);
-        let data = '';
-        if(type === 'quote'){
-            $(`#type`).text('quote');
-            data = await this.generateProducts('quote');
-        }else{
-            $(`#type`).text('invoice');
-            data = await this.generateProducts('invoice');
-        }
-        $('tbody').append(data);
-        const htmlModified = $.html();
-        // generate pdf
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        await page.setContent(htmlModified, { waitUntil: 'networkidle0' });
-        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true, preferCSSPageSize: true });
-        // Close the browser
-        await browser.close();
-        return pdfBuffer;
-    }
+        $(`#type`).text(type);
 
-    findColumn(columns, name){
-        for(let x = 0; x != columns.length; x++){
-            for(let y = 0; y != columns[x].column.length; y++){
-                if(columns[x].column[y].name === name){
-                    return {"fieldId":columns[x].fieldId, "columnId":columns[x].column[y].id, "columnName":columns[x].column[y].name};
-                }
-            }
-        }
-        return undefined;
-    }
-
-    async generateProducts(type){
         let htmlData = ``;
+        let total = 0;
         const labelData = await this.labelTemplate.loadTemplateFile();
         const columns = await this.projectManager.getColumnProject(labelData.quoteColumn);
         let sourceColumn = undefined;
@@ -90,10 +72,22 @@ class InvoiceManager{
                     finalLabels += ` ${labels[y].name}`;
                 }
             }
+            total += price;
             htmlData += `<tr><td>${finalLabels || "no labels"}</td><td>${desc}</td><td>1</td><td>${price}</td></tr>`;
             await this.projectManager.moveCardToColumn(payColumn.fieldId, cards[x].itemId, payColumn.columnId);
         }
-        return htmlData;
+        $('tbody').append(htmlData);
+        $(`#tva`).text(invoiceTemplate.tva);
+        $(`#total`).text(total+((invoiceTemplate.tva/100)*total));
+        const htmlModified = $.html();
+        // generate pdf
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.setContent(htmlModified, { waitUntil: 'networkidle0' });
+        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true, preferCSSPageSize: true });
+        // Close the browser
+        await browser.close();
+        return pdfBuffer;
     }
 }
 
