@@ -30,7 +30,6 @@ class ProjectManager{
           owner,
           repository,
         });
-        console.log(data.repository.projectsV2.nodes);
         return data.repository.projectsV2.nodes;
       } catch(error) {
         console.error(error);
@@ -233,6 +232,10 @@ class ProjectManager{
                             }
                           }
                         }
+                        ... on ProjectV2ItemFieldTextValue{
+                          id
+                          text
+                        }
                       }
                     }
                   }
@@ -252,14 +255,19 @@ class ProjectManager{
             const fields = projects[i].items.nodes;
             for(let j = 0; j != fields.length; j++){
               let labels = [];
+              let desc = "";
               let itemId = "";
               let fieldColumnName = ""
               if(fields[j].fieldValues){
                 const nodes = fields[j].fieldValues.nodes;
                 for(let k=0; k != nodes.length; k++){
+                  // console.log(nodes[k])
+                  if(nodes[k].text){
+                    desc = nodes[k].text;
+                  }
                   if(nodes[k].id){
                       itemId = fields[j].id;
-                      fieldColumnName = nodes[k].name
+                      fieldColumnName = nodes[k].name;
                   }
                   if(nodes[k].labels){
                     let labelItems = nodes[k].labels.nodes;
@@ -268,16 +276,19 @@ class ProjectManager{
                     }
                   }
                 }
-                items.push({"columnName":fieldColumnName, "itemId":itemId, "labels":labels});
+                // console.log(fieldColumnId, columnId)
+                if(fieldColumnName === columnName){
+                  items.push({"columnName":fieldColumnName, "itemId":itemId, "labels":labels, "desc":desc});
+                }
               }
             }
           }
         }
-        for(let x=0; x != items.length; x++){
-          if(items[x].columnName != columnName){
-            items.splice(x, 1);
-          }
-        }
+        // for(let x=0; x != items.length; x++){
+        //   if(items[x].columnId != columnId){
+        //     items.splice(x, 1);
+        //   }
+        // }
         return items;
       }catch (error){
         console.log(error.message);
@@ -314,8 +325,7 @@ class ProjectManager{
         const response  = await this.octokit.graphql(query, {
           input
         });
-        console.log(response)
-        return [];
+        return true;
       }catch (error){
         console.log(error.message);
         throw error;

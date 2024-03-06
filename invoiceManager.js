@@ -46,7 +46,7 @@ class InvoiceManager{
         for(let x = 0; x != columns.length; x++){
             for(let y = 0; y != columns[x].column.length; y++){
                 if(columns[x].column[y].name === name){
-                    return {"fieldId":columns[x].fieldId, "columnId":columns[x].column[y].id};
+                    return {"fieldId":columns[x].fieldId, "columnId":columns[x].column[y].id, "columnName":columns[x].column[y].name};
                 }
             }
         }
@@ -64,18 +64,20 @@ class InvoiceManager{
         } else if(type === 'invoice'){
             sourceColumn = this.findColumn(columns, labelData.invoiceColumn);
         }
-        const cards = await this.projectManager.getAllCardsInColumn(sourceColumn.columnId);
+        const cards = await this.projectManager.getAllCardsInColumn(sourceColumn.columnName);
         for(let x = 0; x != cards.length; x++){
             const labels = cards[x].labels
+            let finalLabels = "";
+            let price = 0;
+            let desc = cards[x].desc || 'No description';
             for(let y = 0; y != labels.length; y++){
                 if(labelData[labels[y].name] || labelData[labels[y].name] === 0){
-                    let price = labelData[labels[y].name];
-                    let hourPrice = '50';
-                    let desc = "description";
-                    htmlData += `<tr><td>${labels[y].name}</td><td>${price}</td><td>${hourPrice}</td><td>${desc}</td></tr>`;
+                    price += labelData[labels[y].name];
+                    finalLabels += ` ${labels[y].name}`;
                 }
-                await this.projectManager.moveCardToColumn(payColumn.fieldId, cards[x].itemId, payColumn.columnId);
             }
+            htmlData += `<tr><td>${finalLabels || "no labels"}</td><td>${desc}</td><td>1</td><td>${price}</td></tr>`;
+            await this.projectManager.moveCardToColumn(payColumn.fieldId, cards[x].itemId, payColumn.columnId);
         }
         return htmlData;
     }
