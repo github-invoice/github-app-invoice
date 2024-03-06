@@ -20,7 +20,17 @@ class InvoiceManager{
         const invoiceTemplate = this.invoiceTemplate.loadTemplateFile();
         // modify html
         $(`#company`).text(invoiceTemplate.companyName);
-        $(`#project`).text(invoiceTemplate.projectName);
+        // client
+        $(`#clientName`).text(invoiceTemplate.clientName);
+        $(`#clientProject`).text(invoiceTemplate.clientProject);
+        $(`#clientAddress`).text(invoiceTemplate.clientAddress);
+        $(`#clientEmail`).text(invoiceTemplate.clientEmail);
+        // team
+        $(`#teamProject`).text(invoiceTemplate.teamProject);
+        $(`#teamName`).text(invoiceTemplate.teamName);
+        $(`#teamAddress`).text(invoiceTemplate.teamAddress);
+        $(`#teamEmail`).text(invoiceTemplate.teamEmail);
+
         $(`#logo`).attr('src', invoiceTemplate.logoUrl);
         let data = '';
         if(type === 'quote'){
