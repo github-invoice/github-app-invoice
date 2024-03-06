@@ -21,12 +21,13 @@ async function fetchUserInfo() {
   }
 }
 
-fetchUserInfo();
+// fetchUserInfo();
 
 const app = express();
 
 const GithubEvents = {
   installation: 'installation',
+  installationRepo: 'installation_repositories',
   created: 'created',
   issues: 'issues',
   createInvoice: 'create-invoice',
@@ -36,50 +37,56 @@ const GithubEvents = {
   merge: 'merge',
 }
 
-app.post('/webhook', express.json({type: 'application/json'}), (request, response) => {
+app.post('/webhook', express.json({type: 'application/json'}), async (request, response) => {
   response.status(202).send('Accepted');
   const githubEvent = request.headers['x-github-event'];
-  payload = request.body;
-  const owner = payload.repository.owner.login;
-  const repo = payload.repository.name;
-  const branch = payload.repository.default_branch;
-
+  let payload = request.body;
   switch (githubEvent) {
-
-    case GithubEvents.installation || GithubEvents.created:
+    case GithubEvents.created:
+    case GithubEvents.installationRepo:
+    case GithubEvents.installation:
+      if(payload.action !== 'created'){
+        return;
+      }
       const repositoriesAdded = payload.repositories_added;
       for (const repository of repositoriesAdded) {
+        let owner = payload.installation.account.login;
         const repositoryName = repository.full_name;
         const projectManager = new ProjectManager(octokit, owner, repositoryName);
         const fileManager = new FileManager(octokit, owner, repositoryName);
-        if(projectManager.hasProjects() === false){
-          projectManager.createProject('InvoiceProject');
+        if(await projectManager.hasProjects() === false){
+          await projectManager.createProject('InvoiceProject');
         }
-        projectManager.createColumnProject('pay');
-        projectManager.createDedicatedBranch('github-invoice');
+        await projectManager.createColumnProject('pay');
+        await projectManager.createDedicatedBranch('github-invoice');
         const labelTemplate = new LabelTemplate(fileManager, projectManager);
         const invoiceTemplate = new InvoiceTemplate(fileManager);
-        labelTemplate.createTemplateFile();
-        invoiceTemplate.createTemplateFile();
+        await labelTemplate.createTemplateFile();
+        await invoiceTemplate.createTemplateFile();
       }
-      res.status(200).end();
+      // res.status(200).end();
       break;
 
     case GithubEvents.issues:
       const action = payload.action;
       if (action === 'labeled') {
-        console.log(`An issue was labeled with this title: ${data.issue.title}`);
+        let owner = payload.repository.owner.login;
+        let repo = payload.repository.name;
         const projectManager = new ProjectManager(octokit, owner, repo);
         const fileManager = new FileManager(octokit, owner, repo);
         const invoiceManager = new InvoiceManager(fileManager, projectManager);
-        fileContent = invoiceManager.createInvoice('quote');
-        fileManager.createFile('quote.pdf', fileContent);
+        fileContent = await invoiceManager.createInvoice('quote');
+        await fileManager.createFile('quote.pdf', fileContent);
       } else {
         console.log(`Unhandled action for the issue event: ${action}`);
       }
       break;
 
-    case GithubEvents.pullRequest || GithubEvents.push || GithubEvents.merge:
+    case GithubEvents.merge:
+    case GithubEvents.push:
+    case GithubEvents.pullRequest:
+      let owner = payload.repository.owner.login;
+      let repo = payload.repository.name;
       processInvoice = false;
       if(githubEvent === GithubEvents.pullRequest || githubEvent === GithubEvents.merge){
         const pullRequest = payload.pull_request;
@@ -97,8 +104,8 @@ app.post('/webhook', express.json({type: 'application/json'}), (request, respons
         const projectManager = new ProjectManager(octokit, owner, repo);
         const fileManager = new FileManager(octokit, owner, repo);
         const invoiceManager = new InvoiceManager(fileManager, projectManager);
-        fileContent = invoiceManager.createInvoice('invoice');
-        fileManager.createFile('invoice.pdf', fileContent);
+        fileContent = await invoiceManager.createInvoice('invoice');
+        await fileManager.createFile('invoice.pdf', fileContent);
       }
       break;
     default:
