@@ -19,7 +19,7 @@ class LabelTemplate{
                 'wontfix': 500,
             }
             const jsonData = JSON.stringify(data, null, 2);
-            await this.fileManager.createFile(this.filePath+this.fileName, jsonData, 'Create label template');
+            await this.fileManager.updateFile(this.filePath+this.fileName, jsonData, 'Create label template');
             return true;
         }catch(e){
             console.log(e);
