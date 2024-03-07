@@ -276,7 +276,6 @@ class ProjectManager{
                     }
                   }
                 }
-                // console.log(fieldColumnId, columnId)
                 if(fieldColumnName === columnName){
                   items.push({"columnName":fieldColumnName, "itemId":itemId, "labels":labels, "desc":desc});
                 }
@@ -284,11 +283,6 @@ class ProjectManager{
             }
           }
         }
-        // for(let x=0; x != items.length; x++){
-        //   if(items[x].columnId != columnId){
-        //     items.splice(x, 1);
-        //   }
-        // }
         return items;
       }catch (error){
         console.log(error.message);
@@ -336,6 +330,18 @@ class ProjectManager{
       try {
         const projectsIds = await this.getProjectsIds();
         const projectId = projectsIds[0].id;
+        const columns = await this.getColumnProject();
+        if(columns.length > 0){
+          for(let i = 0; i != columns.length; i++){
+            if(columns[i].column.length > 0){
+              for(let j = 0; j != columns[i].column.length; j++){
+                if(columns[i].column[j].name === name){
+                  return true;
+                }
+              }
+            }
+          }
+        }
         const input = {
           projectId: projectId,
           name: "github-invoice",
