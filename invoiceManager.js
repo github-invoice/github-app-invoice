@@ -81,7 +81,7 @@ class InvoiceManager{
         $(`#total`).text(total+((invoiceTemplate.tva/100)*total));
         const htmlModified = $.html();
         // generate pdf
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({args: ['--no-sandbox']});
         const page = await browser.newPage();
         await page.setContent(htmlModified, { waitUntil: 'networkidle0' });
         const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true, preferCSSPageSize: true });

@@ -48,21 +48,25 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
       if(payload.action !== 'created'){
         return;
       }
-      const repositoriesAdded = payload.repositories_added;
-      for (const repository of repositoriesAdded) {
-        let owner = payload.installation.account.login;
-        const repositoryName = repository.full_name;
-        const projectManager = new ProjectManager(octokit, owner, repositoryName);
-        const fileManager = new FileManager(octokit, owner, repositoryName);
-        if(await projectManager.hasProjects() === false){
-          await projectManager.createProject('InvoiceProject');
+      try{
+        const repositoriesAdded = payload.repositories_added;
+        for (const repository of repositoriesAdded) {
+          let owner = payload.installation.account.login;
+          const repositoryName = repository.full_name;
+          const projectManager = new ProjectManager(octokit, owner, repositoryName);
+          const fileManager = new FileManager(octokit, owner, repositoryName);
+          if(await projectManager.hasProjects() === false){
+            await projectManager.createProject('InvoiceProject');
+          }
+          await projectManager.createColumnProject('pay');
+          await projectManager.createDedicatedBranch('github-invoice');
+          const labelTemplate = new LabelTemplate(fileManager, projectManager);
+          const invoiceTemplate = new InvoiceTemplate(fileManager);
+          await labelTemplate.createTemplateFile();
+          await invoiceTemplate.createTemplateFile();
         }
-        await projectManager.createColumnProject('pay');
-        await projectManager.createDedicatedBranch('github-invoice');
-        const labelTemplate = new LabelTemplate(fileManager, projectManager);
-        const invoiceTemplate = new InvoiceTemplate(fileManager);
-        await labelTemplate.createTemplateFile();
-        await invoiceTemplate.createTemplateFile();
+      }catch(error){
+        console.error('Error:', error.message);
       }
       // res.status(200).end();
       break;
@@ -70,13 +74,17 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
     case GithubEvents.issues:
       const action = payload.action;
       if (action === 'labeled') {
-        let owner = payload.repository.owner.login;
-        let repo = payload.repository.name;
-        const projectManager = new ProjectManager(octokit, owner, repo);
-        const fileManager = new FileManager(octokit, owner, repo);
-        const invoiceManager = new InvoiceManager(fileManager, projectManager);
-        fileContent = await invoiceManager.createInvoice('quote');
-        await fileManager.createFile('quote.pdf', fileContent);
+        try{
+          let owner = payload.repository.owner.login;
+          let repo = payload.repository.name;
+          const projectManager = new ProjectManager(octokit, owner, repo);
+          const fileManager = new FileManager(octokit, owner, repo);
+          const invoiceManager = new InvoiceManager(fileManager, projectManager);
+          fileContent = await invoiceManager.createInvoice('quote');
+          await fileManager.updateFile('quote.pdf', fileContent, "quote");
+        } catch(error){
+          console.error('Error:', error.message);
+        }
       } else {
         console.log(`Unhandled action for the issue event: ${action}`);
       }
@@ -101,11 +109,17 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
         }
       }
       if(processInvoice){
-        const projectManager = new ProjectManager(octokit, owner, repo);
-        const fileManager = new FileManager(octokit, owner, repo);
-        const invoiceManager = new InvoiceManager(fileManager, projectManager);
-        fileContent = await invoiceManager.createInvoice('invoice');
-        await fileManager.createFile('invoice.pdf', fileContent);
+        try{
+          const sender = payload.pusher.name;
+          const email = payload.pusher.email;
+          const projectManager = new ProjectManager(octokit, owner, repo);
+          const fileManager = new FileManager(octokit, owner, repo, sender, email);
+          const invoiceManager = new InvoiceManager(fileManager, projectManager);
+          fileContent = await invoiceManager.createInvoice('invoice');
+          await fileManager.updateFile('invoice.pdf', fileContent, "invoice");
+        } catch(error){
+          console.error('Error:', error.message);
+        }
       }
       break;
     default:

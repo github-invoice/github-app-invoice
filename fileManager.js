@@ -9,7 +9,7 @@ class FileManager {
 
   async createFile(filePath, fileContent, commitMessage){
     try {
-      let content = Buffer.from(fileContent, 'ascii').toString('base64');
+      let content = Buffer.from("create "+fileContent, 'ascii').toString('base64');
       await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
         owner: this.owner,
         repo: this.repo,
@@ -48,8 +48,9 @@ class FileManager {
 
   async updateFile(filePath, fileContent, commitMessage){
     try {
+      // TODO: check if file exists before updating
       let sha = await this.getSha(filePath);
-      let content = Buffer.from(fileContent, 'ascii').toString('base64');
+      let content = Buffer.from("update "+fileContent, 'ascii').toString('base64');
       await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
         owner: this.owner,
         repo: this.repo,
