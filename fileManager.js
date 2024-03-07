@@ -42,7 +42,7 @@ class FileManager {
       return data.sha;
     }catch (error) {
       console.error(error);
-      throw error;
+      return undefined;
     };
   }
 
@@ -71,6 +71,7 @@ class FileManager {
       return true;
     }catch (error){
       console.log(error.message);
+      return false;
     }
   }
 
@@ -88,7 +89,7 @@ class FileManager {
         return content;
     }catch (error){
       console.log(error.message);
-      throw error;
+      return undefined;
     }
   }
 }

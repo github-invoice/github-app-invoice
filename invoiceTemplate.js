@@ -27,7 +27,7 @@ class InvoiceTemplate{
             return true;
         }catch(e){
             console.log(e);
-            throw e;
+            return false;
         }
     }
 
@@ -43,7 +43,7 @@ class InvoiceTemplate{
             return data;
         }catch(e){
             console.log(e);
-            throw e;
+            return undefined;
         }
     }
 

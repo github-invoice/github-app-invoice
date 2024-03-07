@@ -81,7 +81,9 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
           const fileManager = new FileManager(octokit, owner, repo);
           const invoiceManager = new InvoiceManager(fileManager, projectManager);
           fileContent = await invoiceManager.createInvoice('quote');
-          await fileManager.updateFile('quote.pdf', fileContent, "quote");
+          if(fileContent === undefined){
+            await fileManager.updateFile('quote.pdf', fileContent, "quote");
+          }
         } catch(error){
           console.error('Error:', error.message);
         }
@@ -116,7 +118,9 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
           const fileManager = new FileManager(octokit, owner, repo, sender, email);
           const invoiceManager = new InvoiceManager(fileManager, projectManager);
           fileContent = await invoiceManager.createInvoice('invoice');
-          await fileManager.updateFile('invoice.pdf', fileContent, "invoice");
+          if(fileContent === undefined){
+            await fileManager.updateFile('invoice.pdf', fileContent, "invoice");
+          }
         } catch(error){
           console.error('Error:', error.message);
         }

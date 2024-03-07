@@ -32,8 +32,8 @@ class ProjectManager{
         });
         return data.repository.projectsV2.nodes;
       } catch(error) {
-        console.error(error);
-        throw error;
+        console.error(error.message);
+        return undefined;
       };
     }
 
@@ -52,7 +52,7 @@ class ProjectManager{
         return ret['repository']['owner']['id'].toString();
       } catch (error) {
         console.error('Error getting owner id:', error);
-        throw error;
+        return undefined;
       }
     }
 
@@ -90,7 +90,7 @@ class ProjectManager{
         return projects.length > 0;
       } catch (error) {
         console.error('Error:', error.message);
-        throw error;
+        return false;
       }
     }
 
@@ -112,7 +112,7 @@ class ProjectManager{
         return data.repository.id;
       } catch(error) {
         console.error(error);
-        throw error;
+        return undefined;
       };
     }
 
@@ -133,7 +133,7 @@ class ProjectManager{
         return true;
       } catch(error) {
         console.error(error);
-        throw error;
+        return false;
       };
     }
 
@@ -199,7 +199,7 @@ class ProjectManager{
         return columns;
       }catch (error){
         console.log(error.message);
-        throw error;
+        return undefined;
       }
     }
 
@@ -286,7 +286,7 @@ class ProjectManager{
         return items;
       }catch (error){
         console.log(error.message);
-        throw error;
+        return undefined;
       }
     }
 
@@ -322,7 +322,7 @@ class ProjectManager{
         return true;
       }catch (error){
         console.log(error.message);
-        throw error;
+        return false;
       }
     }
 
@@ -365,7 +365,7 @@ class ProjectManager{
         return true;
       }catch (error){
         console.log(error.message);
-        throw error;
+        return false;
       }
     }
 
@@ -385,7 +385,7 @@ class ProjectManager{
         return data.commit.sha;
       } catch (error){
         console.log(error);
-        throw error;
+        return undefined;
       }
     }
 
@@ -411,7 +411,7 @@ class ProjectManager{
         return true;
       }catch (error){
         console.log(error.message);
-        throw error;
+        return false;
       }
     }
 
@@ -422,7 +422,7 @@ class ProjectManager{
         return data;
       } catch (error) {
         console.error('Error fetching default branch:', error);
-        throw error;
+        return undefined;
       }
     }
 }

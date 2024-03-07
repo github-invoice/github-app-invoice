@@ -23,7 +23,7 @@ class LabelTemplate{
             return true;
         }catch(e){
             console.log(e);
-            throw e;
+            return false;
         }
     }
 
@@ -34,7 +34,7 @@ class LabelTemplate{
             return jsonData;
         }catch(e){
             console.log(e);
-            throw e;
+            return undefined;
         }
     }
 
