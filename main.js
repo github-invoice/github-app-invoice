@@ -49,9 +49,11 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
         const repositoriesAdded = payload.repositories_added;
         for (const repository of repositoriesAdded) {
           let owner = payload.installation.account.login;
-          const repositoryName = repository.full_name;
+          let email = payload.requester.email;
+          let name = payload.requester.name;
+          const repositoryName = repository.name;
           const projectManager = new ProjectManager(octokit, owner, repositoryName);
-          const fileManager = new FileManager(octokit, owner, repositoryName);
+          const fileManager = new FileManager(octokit, owner, repositoryName, name, email);
           if(await projectManager.hasProjects() === false){
             await projectManager.createProject('InvoiceProject');
           }

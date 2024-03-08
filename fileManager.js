@@ -1,5 +1,5 @@
 class FileManager {
-  constructor(octokit, owner, repo, sender, senderMail) {
+  constructor(octokit, owner, repo, sender="", senderMail="") {
     this.octokit = octokit;
     this.owner = owner;
     this.repo = repo;
