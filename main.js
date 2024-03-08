@@ -42,12 +42,9 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
   const githubEvent = request.headers['x-github-event'];
   let payload = request.body;
   switch (githubEvent) {
-    case GithubEvents.created:
     case GithubEvents.installationRepo:
     case GithubEvents.installation:
-      if(payload.action !== 'created'){
-        return;
-      }
+      if(payload.action !== 'created' && payload.action !== 'added' && payload.action !== 'unsuspend') return;
       try{
         const repositoriesAdded = payload.repositories_added;
         for (const repository of repositoriesAdded) {
