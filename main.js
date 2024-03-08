@@ -54,15 +54,16 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
           const repositoryName = repository.name;
           const projectManager = new ProjectManager(octokit, owner, repositoryName);
           const fileManager = new FileManager(octokit, owner, repositoryName, name, email);
+          check = true;
           if(await projectManager.hasProjects() === false){
-            await projectManager.createProject('InvoiceProject');
+            check = await projectManager.createProject('InvoiceProject');
           }
-          await projectManager.createColumnProject('pay');
-          await projectManager.createDedicatedBranch('github-invoice');
+          if(check) check = await projectManager.createColumnProject('pay');
+          if(check) check =await projectManager.createDedicatedBranch('github-invoice');
           const labelTemplate = new LabelTemplate(fileManager, projectManager);
           const invoiceTemplate = new InvoiceTemplate(fileManager);
-          await labelTemplate.createTemplateFile();
-          await invoiceTemplate.createTemplateFile();
+          if(check) check = await labelTemplate.createTemplateFile();
+          if(check) check = await invoiceTemplate.createTemplateFile();
         }
       }catch(error){
         console.error('Error:', error.message);
