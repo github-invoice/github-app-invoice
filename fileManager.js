@@ -9,12 +9,12 @@ class FileManager {
 
   async createFile(filePath, fileContent, commitMessage){
     try {
-      let content = Buffer.from("create "+fileContent, 'ascii').toString('base64');
+      let content = Buffer.from(fileContent, 'ascii').toString('base64');
       await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
         owner: this.owner,
         repo: this.repo,
         path: filePath,
-        message: commitMessage,
+        message: "create "+commitMessage,
         branch: 'github-invoice',
         committer: {
           name: this.sender,
@@ -51,23 +51,24 @@ class FileManager {
       let sha = await this.getSha(filePath);
       if(sha === undefined){
         this.createFile(filePath, fileContent, commitMessage);
+      }else{
+        let content = Buffer.from(fileContent, 'ascii').toString('base64');
+        await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+          owner: this.owner,
+          repo: this.repo,
+          path: filePath,
+          message: "update "+commitMessage,
+          committer: {
+            name: this.sender,
+            email: this.senderMail
+          },
+          sha: sha,
+          content: content,
+          headers: {
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        });
       }
-      let content = Buffer.from("update "+fileContent, 'ascii').toString('base64');
-      await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
-        owner: this.owner,
-        repo: this.repo,
-        path: filePath,
-        message: commitMessage,
-        committer: {
-          name: this.sender,
-          email: this.senderMail
-        },
-        sha: sha,
-        content: content,
-        headers: {
-          'X-GitHub-Api-Version': '2022-11-28'
-        }
-      });
       return true;
     }catch (error){
       console.log(error.message);
