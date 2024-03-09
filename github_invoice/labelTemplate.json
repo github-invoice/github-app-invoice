@@ -1,4 +1,4 @@
-update {
+{
   "currency": "USD",
   "invoiceColumn": "Done",
   "quoteColumn": "Todo",
