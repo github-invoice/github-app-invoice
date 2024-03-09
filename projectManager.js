@@ -190,9 +190,7 @@ class ProjectManager{
           if(projects[i].id == projectId){
             const fields = projects[i].fields.nodes;
             for(let j = 0; j != fields.length; j++){
-              if(fields[j].name == "Status"){
-                columns.push({'fieldId': fields[j].id, 'column':fields[j].options});
-              }
+              columns.push({'fieldId': fields[j].id, 'column':fields[j].options});
             }
           }
         }
@@ -333,7 +331,7 @@ class ProjectManager{
         const columns = await this.getColumnProject();
         if(columns.length > 0){
           for(let i = 0; i != columns.length; i++){
-            if(columns[i].column.length > 0){
+            if(columns[i].column){
               for(let j = 0; j != columns[i].column.length; j++){
                 if(columns[i].column[j].name === name){
                   return true;

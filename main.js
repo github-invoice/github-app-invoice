@@ -49,17 +49,16 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
         const repositoriesAdded = payload.repositories_added;
         for (const repository of repositoriesAdded) {
           let owner = payload.installation.account.login;
-          let email = payload.requester.email;
-          let name = payload.requester.name;
+          let name = payload.sender.login;
           const repositoryName = repository.name;
           const projectManager = new ProjectManager(octokit, owner, repositoryName);
-          const fileManager = new FileManager(octokit, owner, repositoryName, name, email);
+          const fileManager = new FileManager(octokit, owner, repositoryName, name);
           check = true;
           if(await projectManager.hasProjects() === false){
             check = await projectManager.createProject('InvoiceProject');
           }
           if(check) check = await projectManager.createColumnProject('pay');
-          if(check) check =await projectManager.createDedicatedBranch('github-invoice');
+          if(check) check = await projectManager.createDedicatedBranch('github-invoice');
           const labelTemplate = new LabelTemplate(fileManager, projectManager);
           const invoiceTemplate = new InvoiceTemplate(fileManager);
           if(check) check = await labelTemplate.createTemplateFile();
@@ -112,8 +111,8 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
       }
       if(processInvoice){
         try{
-          const sender = payload.pusher.name;
-          const email = payload.pusher.email;
+          const sender = payload.login.name || "undefined";
+          const email = payload.pusher.email || "undefined";
           const projectManager = new ProjectManager(octokit, owner, repo);
           const fileManager = new FileManager(octokit, owner, repo, sender, email);
           const invoiceManager = new InvoiceManager(fileManager, projectManager);
