@@ -1,0 +1,11 @@
+update {
+  "currency": "USD",
+  "invoiceColumn": "Done",
+  "quoteColumn": "Todo",
+  "payedColumn": "pay",
+  "documentation": 100,
+  "bug": 0,
+  "enhancement": 300,
+  "duplicate": 0,
+  "wontfix": 500
+}
