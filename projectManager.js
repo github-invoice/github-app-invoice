@@ -32,7 +32,7 @@ class ProjectManager{
         });
         return data.repository.projectsV2.nodes;
       } catch(error) {
-        console.error(error.message);
+        console.error('get project id error: ', error.message);
         return undefined;
       };
     }
@@ -89,7 +89,7 @@ class ProjectManager{
         const projects = await this.getProjectsIds();
         return projects.length > 0;
       } catch (error) {
-        console.error('Error:', error.message);
+        console.error('has project Error:', error.message);
         return false;
       }
     }
@@ -111,7 +111,7 @@ class ProjectManager{
         });
         return data.repository.id;
       } catch(error) {
-        console.error(error);
+        console.error('get repo id Error:', error);
         return undefined;
       };
     }
@@ -132,7 +132,7 @@ class ProjectManager{
         });
         return true;
       } catch(error) {
-        console.error(error);
+        console.error('link project to repo Error:', error);
         return false;
       };
     }
@@ -196,7 +196,7 @@ class ProjectManager{
         }
         return columns;
       }catch (error){
-        console.log(error.message);
+        console.log('get column project Error:', error.message);
         return undefined;
       }
     }
@@ -283,7 +283,7 @@ class ProjectManager{
         }
         return items;
       }catch (error){
-        console.log(error.message);
+        console.log('get all card in column Error:', error.message);
         return undefined;
       }
     }
@@ -319,7 +319,7 @@ class ProjectManager{
         });
         return true;
       }catch (error){
-        console.log(error.message);
+        console.log('move card to column Error:', error.message);
         return false;
       }
     }
@@ -362,7 +362,7 @@ class ProjectManager{
         });
         return true;
       }catch (error){
-        console.log(error.message);
+        console.log('create column project Error:', error.message);
         return false;
       }
     }
@@ -382,7 +382,7 @@ class ProjectManager{
         })
         return data.commit.sha;
       } catch (error){
-        console.log(error);
+        console.log('get last commit Error:', error);
         return undefined;
       }
     }
@@ -408,7 +408,7 @@ class ProjectManager{
         });
         return true;
       }catch (error){
-        console.log(error.message);
+        console.log('create dedicated branch Error:', error.message);
         return false;
       }
     }
@@ -419,7 +419,7 @@ class ProjectManager{
         const data = await response.json();
         return data;
       } catch (error) {
-        console.error('Error fetching default branch:', error);
+        console.error('get repo infos Error:', error);
         return undefined;
       }
     }

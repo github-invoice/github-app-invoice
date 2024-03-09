@@ -26,7 +26,7 @@ class InvoiceTemplate{
             await this.fileManager.updateFile(this.filePath+this.fileName, jsonData, 'Create quote template');
             return true;
         }catch(e){
-            console.log(e);
+            console.log('create invoice template error: ', e);
             return false;
         }
     }
@@ -42,7 +42,7 @@ class InvoiceTemplate{
             }
             return data;
         }catch(e){
-            console.log(e);
+            console.log('load invoice template error: ', e);
             return undefined;
         }
     }

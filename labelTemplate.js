@@ -22,7 +22,7 @@ class LabelTemplate{
             await this.fileManager.updateFile(this.filePath+this.fileName, jsonData, 'Create label template');
             return true;
         }catch(e){
-            console.log(e);
+            console.log('create label template error: ', e);
             return false;
         }
     }
@@ -33,7 +33,7 @@ class LabelTemplate{
             const jsonData = JSON.parse(content);
             return jsonData;
         }catch(e){
-            console.log(e);
+            console.log('load label template error: ', e);
             return undefined;
         }
     }

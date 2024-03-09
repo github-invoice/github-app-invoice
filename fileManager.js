@@ -27,7 +27,7 @@ class FileManager {
       });
       return true;
     }catch (error){
-      console.log(error.message);
+      console.log('create file Error:', error.message);
       return false;
     }
   }
@@ -41,7 +41,7 @@ class FileManager {
       });
       return data.sha;
     }catch (error) {
-      console.error(error);
+      console.error('get sha Error:', error);
       return undefined;
     };
   }
@@ -71,7 +71,7 @@ class FileManager {
       }
       return true;
     }catch (error){
-      console.log(error.message);
+      console.log('update file Error:', error.message);
       return false;
     }
   }
@@ -89,7 +89,7 @@ class FileManager {
         const content = Buffer.from(response.data.content, 'base64').toString('utf-8');
         return content;
     }catch (error){
-      console.log(error.message);
+      console.log('get file Error:', error.message);
       return undefined;
     }
   }

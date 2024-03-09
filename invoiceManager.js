@@ -90,7 +90,7 @@ class InvoiceManager{
             await browser.close();
             return pdfBuffer;
         } catch (error){
-            console.error('Error:', error.message);
+            console.error('create ' + type + ' Error:', error.message);
             return undefined;
         }
     }
