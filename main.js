@@ -79,7 +79,7 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
           const fileManager = new FileManager(octokit, owner, repo);
           const invoiceManager = new InvoiceManager(fileManager, projectManager);
           fileContent = await invoiceManager.createInvoice('quote');
-          if(fileContent === undefined){
+          if(fileContent !== undefined){
             await fileManager.updateFile('quote.pdf', fileContent, "quote");
           }
         } catch(error){
