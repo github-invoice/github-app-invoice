@@ -71,7 +71,7 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
 
     case GithubEvents.issues:
       const action = payload.action;
-      if (action === 'labeled') {
+      if (action === 'labeled' || action === 'unlabeled') {
         try{
           let owner = payload.repository.owner.login;
           let repo = payload.repository.name;

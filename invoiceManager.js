@@ -14,7 +14,6 @@ class InvoiceManager{
 
     findColumn(columns, name){
         for(let x = 0; x != columns.length; x++){
-            console.log(columns[x].column)
             if(columns[x].column !== undefined){
                 for(let y = 0; y != columns[x].column.length; y++){
                     if(columns[x].column[y].name === name){
