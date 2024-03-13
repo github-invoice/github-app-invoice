@@ -14,9 +14,12 @@ class InvoiceManager{
 
     findColumn(columns, name){
         for(let x = 0; x != columns.length; x++){
-            for(let y = 0; y != columns[x].column.length; y++){
-                if(columns[x].column[y].name === name){
-                    return {"fieldId":columns[x].fieldId, "columnId":columns[x].column[y].id, "columnName":columns[x].column[y].name};
+            console.log(columns[x].column)
+            if(columns[x].column !== undefined){
+                for(let y = 0; y != columns[x].column.length; y++){
+                    if(columns[x].column[y].name === name){
+                        return {"fieldId":columns[x].fieldId, "columnId":columns[x].column[y].id, "columnName":columns[x].column[y].name};
+                    }
                 }
             }
         }
@@ -46,10 +49,10 @@ class InvoiceManager{
             $(`#date`).text(new Date().toLocaleDateString());
             const sha = await this.projectManager.getLastCommit();
             $(`#invoiceNumber`).text(sha);
-            
+
             $(`#logo`).attr('src', invoiceTemplate.logoUrl);
             $(`#type`).text(type);
-            
+
             let htmlData = ``;
             let total = 0;
             const labelData = await this.labelTemplate.loadTemplateFile();
@@ -75,7 +78,9 @@ class InvoiceManager{
                 }
                 total += price;
                 htmlData += `<tr><td>${finalLabels || "no labels"}</td><td>${desc}</td><td>1</td><td>${price}</td></tr>`;
-                await this.projectManager.moveCardToColumn(payColumn.fieldId, cards[x].itemId, payColumn.columnId);
+                if(type === 'invoice' && payColumn !== undefined){
+                    await this.projectManager.moveCardToColumn(payColumn.fieldId, cards[x].itemId, payColumn.columnId);
+                }
             }
             $('tbody').append(htmlData);
             $(`#tva`).text(invoiceTemplate.tva);
