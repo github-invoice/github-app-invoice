@@ -90,13 +90,14 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
       }
       break;
 
-    case GithubEvents.merge:
     case GithubEvents.push:
     case GithubEvents.pullRequest:
       let owner = payload.repository.owner.login;
       let repo = payload.repository.name;
+      const sender = payload.pusher.name;
+      const email = payload.pusher.email;
       processInvoice = false;
-      if(githubEvent === GithubEvents.pullRequest || githubEvent === GithubEvents.merge){
+      if(githubEvent === GithubEvents.pullRequest){
         const pullRequest = payload.pull_request;
         if (pullRequest && pullRequest.base && pullRequest.base.ref === 'main') {
           console.log('Pull request created or updated in main branch:', pullRequest.title);
@@ -110,8 +111,6 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
       }
       if(processInvoice){
         try{
-          const sender = payload.login.name || "undefined";
-          const email = payload.pusher.email || "undefined";
           const projectManager = new ProjectManager(octokit, owner, repo);
           const fileManager = new FileManager(octokit, owner, repo, sender, email);
           const invoiceManager = new InvoiceManager(fileManager, projectManager);
