@@ -103,7 +103,7 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
           console.log('Pull request created or updated in main branch:', pullRequest.title);
           processInvoice = true;
         }
-      }else if (githubEvent === GithubEvents.push){
+      }else if (githubEvent == GithubEvents.push){
         if (payload.ref === 'refs/heads/main') {
           console.log('Push event received in the main branch');
           processInvoice = true;
@@ -115,7 +115,7 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
           const fileManager = new FileManager(octokit, owner, repo, sender, email);
           const invoiceManager = new InvoiceManager(fileManager, projectManager);
           fileContent = await invoiceManager.createInvoice('invoice');
-          if(fileContent === undefined){
+          if(fileContent !== undefined){
             await fileManager.updateFile('invoice.pdf', fileContent, "invoice");
           }
         } catch(error){
