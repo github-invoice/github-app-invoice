@@ -31,7 +31,7 @@ class InvoiceManager{
             const html = await fs.promises.readFile('invoiceTemplate.html', 'utf8');
             const $ = cheerio.load(html);
             // get invoice info
-            const invoiceTemplate = this.invoiceTemplate.loadTemplateFile();
+            const invoiceTemplate = await this.invoiceTemplate.loadTemplateFile();
             // modify html
             $(`#company`).text(invoiceTemplate.companyName);
             // client
