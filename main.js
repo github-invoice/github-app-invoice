@@ -80,7 +80,7 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
           const invoiceManager = new InvoiceManager(fileManager, projectManager);
           fileContent = await invoiceManager.createInvoice('quote');
           if(fileContent !== undefined){
-            await fileManager.updateFile('quote.pdf', fileContent, "quote");
+            await fileManager.updateFile('quote.pdf', fileContent, "quote", 'github-invoice');
           }
         } catch(error){
           console.error('Error:', error.message);
@@ -116,7 +116,7 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
           const invoiceManager = new InvoiceManager(fileManager, projectManager);
           fileContent = await invoiceManager.createInvoice('invoice');
           if(fileContent !== undefined){
-            await fileManager.updateFile('invoice.pdf', fileContent, "invoice");
+            await fileManager.updateFile('invoice.pdf', fileContent, "invoice", 'github-invoice');
           }
         } catch(error){
           console.error('Error:', error.message);

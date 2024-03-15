@@ -7,7 +7,7 @@ class FileManager {
     this.senderMail = senderMail;
   }
 
-  async createFile(filePath, fileContent, commitMessage, branch='github-invoice'){
+  async createFile(filePath, fileContent, commitMessage, branch){
     try {
       let content = Buffer.from(fileContent, 'ascii').toString('base64');
       await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
@@ -47,11 +47,11 @@ class FileManager {
     };
   }
 
-  async updateFile(filePath, fileContent, commitMessage, branch='github-invoice'){
+  async updateFile(filePath, fileContent, commitMessage, branch){
     try {
       let sha = await this.getSha(filePath);
       if(sha === undefined){
-        this.createFile(filePath, fileContent, commitMessage);
+        this.createFile(filePath, fileContent, commitMessage, branch);
       }else{
         let content = Buffer.from(fileContent, 'ascii').toString('base64');
         await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
