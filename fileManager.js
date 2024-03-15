@@ -42,7 +42,7 @@ class FileManager {
       });
       return data.sha;
     }catch (error) {
-      console.error('get sha Error:', error);
+      console.error('get sha Error:', error.message);
       return undefined;
     };
   }

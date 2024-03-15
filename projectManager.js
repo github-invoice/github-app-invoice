@@ -51,7 +51,7 @@ class ProjectManager{
         const ret = await this.octokit.graphql(query);
         return ret['repository']['owner']['id'].toString();
       } catch (error) {
-        console.error('Error getting owner id:', error);
+        console.error('Error getting owner id:', error.message);
         return undefined;
       }
     }
@@ -79,7 +79,7 @@ class ProjectManager{
         await this.linkProjectToRepo(ret.createProjectV2.projectV2.id);
         return true;
       } catch (error) {
-        console.error('Error creating project:', error);
+        console.error('Error creating project:', error.message);
         return false;
       }
     }
@@ -111,7 +111,7 @@ class ProjectManager{
         });
         return data.repository.id;
       } catch(error) {
-        console.error('get repo id Error:', error);
+        console.error('get repo id Error:', error.message);
         return undefined;
       };
     }
@@ -132,7 +132,7 @@ class ProjectManager{
         });
         return true;
       } catch(error) {
-        console.error('link project to repo Error:', error);
+        console.error('link project to repo Error:', error.message);
         return false;
       };
     }
@@ -382,7 +382,7 @@ class ProjectManager{
         })
         return data.commit.sha;
       } catch (error){
-        console.log('get last commit Error:', error);
+        console.log('get last commit Error:', error.message);
         return undefined;
       }
     }
@@ -419,7 +419,7 @@ class ProjectManager{
         const data = await response.json();
         return data;
       } catch (error) {
-        console.error('get repo infos Error:', error);
+        console.error('get repo infos Error:', error.message);
         return undefined;
       }
     }
