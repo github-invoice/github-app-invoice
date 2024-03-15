@@ -110,7 +110,7 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
           processInvoice = true;
         }
       }
-      if(processInvoice && modified !== "invoice.pdf" && modified !== "quote.pdf"){
+      if(processInvoice){
         try{
           const projectManager = new ProjectManager(octokit, owner, repo);
           const fileManager = new FileManager(octokit, owner, repo, sender, email);

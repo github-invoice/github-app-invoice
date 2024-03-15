@@ -37,7 +37,8 @@ class FileManager {
       const {data} = await this.octokit.repos.getContent({
         owner: this.owner,
         repo: this.repo,
-        path: filePath
+        path: filePath,
+        ref: 'github-invoice',
       });
       return data.sha;
     }catch (error) {
