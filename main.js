@@ -96,7 +96,6 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
       let repo = payload.repository.name;
       const sender = payload.pusher.name;
       const email = payload.pusher.email;
-      const modified = payload.head_commit.modified[0];
       processInvoice = false;
       if(githubEvent === GithubEvents.pullRequest){
         const pullRequest = payload.pull_request;
