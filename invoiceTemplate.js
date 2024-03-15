@@ -23,7 +23,7 @@ class InvoiceTemplate{
                 teamEmail: "martinique@outlook.fr"
             }
             const jsonData = JSON.stringify(data, null, 2);
-            await this.fileManager.updateFile(this.filePath+this.fileName, jsonData, 'Create quote template');
+            await this.fileManager.updateFile(this.filePath+this.fileName, jsonData, 'Create quote template', 'main');
             return true;
         }catch(e){
             console.log('create invoice template error: ', e);
