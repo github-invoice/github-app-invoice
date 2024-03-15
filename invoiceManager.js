@@ -75,7 +75,7 @@ class InvoiceManager{
                         finalLabels += ` ${labels[y].name}`;
                     }
                 }
-                total += price;
+                total += parseInt(price);
                 htmlData += `<tr><td>${finalLabels || "no labels"}</td><td>${desc}</td><td>1</td><td>${price}</td></tr>`;
                 if(type === 'invoice' && payColumn !== undefined){
                     await this.projectManager.moveCardToColumn(payColumn.fieldId, cards[x].itemId, payColumn.columnId);
@@ -83,7 +83,7 @@ class InvoiceManager{
             }
             $('tbody').append(htmlData);
             $(`#tva`).text(invoiceTemplate.tva);
-            $(`#total`).text(total+((invoiceTemplate.tva/100)*total));
+            $(`#total`).text(total+((parseInt(invoiceTemplate.tva)/100)*total));
             const htmlModified = $.html();
             // generate pdf
             const browser = await puppeteer.launch({args: ['--no-sandbox']});
