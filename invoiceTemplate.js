@@ -35,12 +35,7 @@ class InvoiceTemplate{
         try{
             const content = await this.fileManager.getFile(this.filePath + this.fileName);
             const jsonData = JSON.parse(content);
-            const data = {
-                logoUrl: jsonData.logoUrl,
-                companyName: jsonData.companyName,
-                projectName: jsonData.projectName
-            }
-            return data;
+            return jsonData;
         }catch(e){
             console.log('load invoice template error: ', e);
             return undefined;
