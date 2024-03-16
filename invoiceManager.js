@@ -47,7 +47,7 @@ class InvoiceManager{
 
             $(`#date`).text(new Date().toLocaleDateString());
             const sha = await this.projectManager.getLastCommit();
-            $(`#invoiceNumber`).text(sha);
+            $(`#invoice-number`).text(sha);
 
             $(`#logo`).attr('src', invoiceTemplate.logoUrl);
             $(`#type`).text(type);
