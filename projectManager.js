@@ -3,11 +3,13 @@
 // graphql doc
 // https://docs.github.com/en/graphql/reference
 class ProjectManager{
-    constructor(octokit, owner, repo, projectId = 1){
+    constructor(octokit, owner, repo, projectId = 1, sender="undefined", senderMail="undefined"){
         this.octokit = octokit;
         this.projectId = projectId;
         this.owner = owner;
         this.repo = repo;
+        this.sender = sender;
+        this.senderMail = senderMail;
     }
 
     async getProjectsIds(){
@@ -389,8 +391,8 @@ class ProjectManager{
 
     async createDedicatedBranch(){
       try {
-        const repoId = await this.getRepoId();
         const sha = await this.getLastCommit();
+        const repoId = await this.getRepoId();
         const input = {
           name: "refs/heads/github-invoice",
           oid: sha,
@@ -406,6 +408,7 @@ class ProjectManager{
         const response  = await this.octokit.graphql(query, {
           input
         });
+        this.deleteAllFiles('github-invoice');
         return true;
       }catch (error){
         console.log('create dedicated branch Error:', error.message);
@@ -420,6 +423,156 @@ class ProjectManager{
         return data;
       } catch (error) {
         console.error('get repo infos Error:', error.message);
+        return undefined;
+      }
+    }
+
+    /****************
+     * FILE MANAGER *
+     ****************/
+    async getContent(branch, filePath){
+      try{
+        const {data} = await this.octokit.repos.getContent({
+          owner: this.owner,
+          repo: this.repo,
+          ref: branch,
+          path: filePath
+        });
+        return data;
+      }catch (error) {
+        console.error('get sha Error:', error.message);
+        return undefined;
+      };
+    }
+
+    async deleteFile(filePath, commitMessage, branch, sha, type){
+      try {
+        if(sha !== undefined){
+          if(type === 'dir'){
+            const files = await this.getContent(branch, filePath);
+            await Promise.all(files.map(async file => {
+              console.log(file)
+              this.deleteFile(file.path, commitMessage, branch, file.sha, file.type);
+            }));
+          }else{
+            await this.octokit.request('DELETE /repos/{owner}/{repo}/contents/{path}', {
+              owner: this.owner,
+              repo: this.repo,
+              path: filePath,
+              message: "delete "+commitMessage,
+              branch: branch,
+              committer: {
+                name: this.sender,
+                email: this.senderMail
+              },
+              sha: sha,
+              headers: {
+                'X-GitHub-Api-Version': '2022-11-28'
+              }
+            });
+          }
+        }
+        return true;
+      }catch (error){
+        console.log('delete file Error:', error.message);
+        return false;
+      }
+    }
+
+    async deleteAllFiles(branch){
+      const content = await this.getContent(branch, '');
+        if(content !== undefined){
+          for(let i = 0; i != content.length; i++){
+            this.deleteFile(content[i].path, 'delete', branch, content[i].sha, content[i].type);
+          }
+        }
+    }
+
+    async createFile(filePath, fileContent, commitMessage, branch){
+      try {
+        let content = Buffer.from(fileContent, 'ascii').toString('base64');
+        await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+          owner: this.owner,
+          repo: this.repo,
+          path: filePath,
+          message: "create "+commitMessage,
+          branch: branch,
+          committer: {
+            name: this.sender,
+            email: this.senderMail
+          },
+          content: content,
+          headers: {
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        });
+        return true;
+      }catch (error){
+        console.log('create file Error:', error.message);
+        return false;
+      }
+    }
+
+    async getSha(filePath){
+      try{
+        const {data} = await this.octokit.repos.getContent({
+          owner: this.owner,
+          repo: this.repo,
+          path: filePath,
+          ref: 'github-invoice',
+        });
+        return data.sha;
+      }catch (error) {
+        console.error('get sha Error:', error.message);
+        return undefined;
+      };
+    }
+
+    async updateFile(filePath, fileContent, commitMessage, branch){
+      try {
+        let sha = await this.getSha(filePath);
+        if(sha === undefined){
+          this.createFile(filePath, fileContent, commitMessage, branch);
+        }else{
+          let content = Buffer.from(fileContent, 'ascii').toString('base64');
+          await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+            owner: this.owner,
+            repo: this.repo,
+            path: filePath,
+            branch: branch,
+            message: "update "+commitMessage,
+            committer: {
+              name: this.sender,
+              email: this.senderMail
+            },
+            sha: sha,
+            content: content,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28'
+            }
+          });
+        }
+        return true;
+      }catch (error){
+        console.log('update file Error:', error.message);
+        return false;
+      }
+    }
+
+    async getFile(filePath){
+      try {
+          const response = await this.octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+              owner: this.owner,
+              repo: this.repo,
+              path: filePath,
+              headers: {
+                'X-GitHub-Api-Version': '2022-11-28'
+              }
+          });
+          const content = Buffer.from(response.data.content, 'base64').toString('utf-8');
+          return content;
+      }catch (error){
+        console.log('get file Error:', error.message);
         return undefined;
       }
     }

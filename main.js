@@ -2,7 +2,6 @@ const { Octokit } = require('@octokit/rest');
 const express = require('express');
 const InvoiceTemplate = require('./invoiceTemplate');
 const LabelTemplate = require('./labelTemplate');
-const FileManager = require('./fileManager');
 const InvoiceManager = require('./invoiceManager');
 const ProjectManager = require('./projectManager');
 const dotenv = require('dotenv');
@@ -51,15 +50,14 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
           let owner = payload.installation.account.login;
           let name = payload.sender.login;
           const repositoryName = repository.name;
-          const projectManager = new ProjectManager(octokit, owner, repositoryName);
-          const fileManager = new FileManager(octokit, owner, repositoryName, name);
+          const projectManager = new ProjectManager(octokit, owner, repositoryName, name);
           if(await projectManager.hasProjects() === false){
             await projectManager.createProject('InvoiceProject');
           }
           await projectManager.createColumnProject('pay');
           await projectManager.createDedicatedBranch('github-invoice');
-          const labelTemplate = new LabelTemplate(fileManager, projectManager);
-          const invoiceTemplate = new InvoiceTemplate(fileManager);
+          const labelTemplate = new LabelTemplate(projectManager);
+          const invoiceTemplate = new InvoiceTemplate(projectManager);
           await labelTemplate.createTemplateFile();
           await invoiceTemplate.createTemplateFile();
         }
@@ -76,11 +74,10 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
           let owner = payload.repository.owner.login;
           let repo = payload.repository.name;
           const projectManager = new ProjectManager(octokit, owner, repo);
-          const fileManager = new FileManager(octokit, owner, repo);
-          const invoiceManager = new InvoiceManager(fileManager, projectManager);
+          const invoiceManager = new InvoiceManager(projectManager);
           fileContent = await invoiceManager.createInvoice('quote');
           if(fileContent !== undefined){
-            await fileManager.updateFile('quote.pdf', fileContent, "quote", 'github-invoice');
+            await projectManager.updateFile('quote.pdf', fileContent, "quote", 'github-invoice');
           }
         } catch(error){
           console.error('Error:', error.message);
@@ -111,12 +108,11 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
       }
       if(processInvoice){
         try{
-          const projectManager = new ProjectManager(octokit, owner, repo);
-          const fileManager = new FileManager(octokit, owner, repo, sender, email);
-          const invoiceManager = new InvoiceManager(fileManager, projectManager);
+          const projectManager = new ProjectManager(octokit, owner, repo, sender, email);
+          const invoiceManager = new InvoiceManager(projectManager);
           fileContent = await invoiceManager.createInvoice('invoice');
           if(fileContent !== undefined){
-            await fileManager.updateFile('invoice.pdf', fileContent, "invoice", 'github-invoice');
+            await projectManager.updateFile('invoice.pdf', fileContent, "invoice", 'github-invoice');
           }
         } catch(error){
           console.error('Error:', error.message);

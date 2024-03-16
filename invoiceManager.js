@@ -5,11 +5,10 @@ const InvoiceTemplate = require('./invoiceTemplate');
 const LabelTemplate = require('./labelTemplate');
 
 class InvoiceManager{
-    constructor(fileManager, projectManager){
-        this.fileManager = fileManager;
+    constructor(projectManager){
         this.projectManager = projectManager;
-        this.invoiceTemplate = new InvoiceTemplate(fileManager);
-        this.labelTemplate = new LabelTemplate(fileManager, projectManager);
+        this.invoiceTemplate = new InvoiceTemplate(projectManager);
+        this.labelTemplate = new LabelTemplate(projectManager);
     }
 
     findColumn(columns, name){

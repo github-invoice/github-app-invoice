@@ -1,6 +1,6 @@
 class LabelTemplate{
-    constructor(fileManager){
-        this.fileManager = fileManager;
+    constructor(projectManager){
+        this.projectManager = projectManager;
         this.fileName = 'labelTemplate.json';
         this.filePath = 'github_invoice/';
     }
@@ -19,7 +19,7 @@ class LabelTemplate{
                 'wontfix': 500,
             }
             const jsonData = JSON.stringify(data, null, 2);
-            await this.fileManager.updateFile(this.filePath+this.fileName, jsonData, 'Create label template', 'main');
+            await this.projectManager.updateFile(this.filePath+this.fileName, jsonData, 'Create label template', 'main');
             return true;
         }catch(e){
             console.log('create label template error: ', e);
@@ -29,7 +29,7 @@ class LabelTemplate{
 
     async loadTemplateFile(){
         try{
-            const content = await this.fileManager.getFile(this.filePath + this.fileName);
+            const content = await this.projectManager.getFile(this.filePath + this.fileName);
             const jsonData = JSON.parse(content);
             return jsonData;
         }catch(e){
