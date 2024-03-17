@@ -33,38 +33,84 @@
     text-align: right;
     font-weight: bold;
   }
-  #company {
+  .header {
     display: flex;
+    justify-content: space-between;
+    padding-bottom: 30px;
+  }
+  .box {
+    /* margin-right: 300px;
+    margin-left: 300px; */
+  }
+  .paragraph-container p{
+      display: inline-block;
+      margin: 0;
+      font-size: 20px;
+  }
+  .type {
+    text-align: center;
   }
 </style>
 </head>
 <body>
 
 <div class="invoice">
+  <h1 id="type"></h1>
   <div class="header">
-    <h1 id="type"></h1>
     <div id="company">
       <img src="https://raw.githubusercontent.com/github-invoice/github-app-invoice/b259764fe84e0618ec1dd45c7d1eaedeea770b3c/github_invoice_logo.png?token=GHSAT0AAAAAACJAXYY3HGU2Q36BV2NVG46AZPHIBFA" alt="Github Logo" width="100" height="100">
       <h2 id="company"></h2>
     </div>
     <div>
-      <h2 id="clientName"></h2>
-      <h3 id="clientProject"></h3>
-      <h4 id="clientAddress"></h4>
-      <h4 id="clientEmail"></h4>
-    </div>
-    <div>
-      <h2 id="teamName"></h2>
-      <h3 id="teamProject"></h3>
-      <h4 id="teamAddress"></h4>
-      <h4 id="teamEmail"></h4>
+      <div class="paragraph-container">
+        <p><strong>Invoice Number:</strong></p>
+        <p id="invoice-number"></p>
+      </div>
+      <div class="paragraph-container">
+        <p><strong>Date:</strong></p>
+        <p id="date"></p>
+      </div>
     </div>
   </div>
-  <div class="details">
-    <p><strong>Invoice Number:</strong></p>
-    <p id="invoice-number"></p>
-    <p><strong>Date:</strong></p>
-    <p id="data"></p>
+  <div class="header">
+    <div class="box">
+      <h2>Client</h2>
+      <div class="paragraph-container">
+        <p><strong>Client:</strong></p>
+        <p id="clientName"></p>
+      </div>
+      <div class="paragraph-container">
+        <p><strong>Project:</strong></p>
+        <p id="clientProject"></p>
+      </div>
+      <div class="paragraph-container">
+        <p><strong>Address:</strong></p>
+        <p id="clientAddress"></p>
+      </div>
+      <div class="paragraph-container">
+        <p><strong>Email:</strong></p>
+        <p id="clientEmail"></p>
+      </div>
+    </div>
+    <div class="box">
+      <h2>Team</h2>
+      <div class="paragraph-container">
+        <p><strong>Team:</strong></p>
+        <p id="teamName"></p>
+      </div>
+      <div class="paragraph-container">
+        <p><strong>Project:</strong></p>
+        <p id="teamProject"></p>
+      </div>
+      <div class="paragraph-container">
+        <p><strong>Address:</strong></p>
+        <p id="teamAddress"></p>
+      </div>
+      <div class="paragraph-container">
+        <p><strong>Email:</strong></p>
+        <p id="teamEmail"></p>
+      </div>
+    </div>
   </div>
   <table>
     <thead>
@@ -79,8 +125,12 @@
     </tbody>
   </table>
   <div class="total">
-    <p><strong>Total:</strong></p>
-    <p id="total"></p>
-    <p><strong>TVA:</strong></p>
-    <p id="tva"></p>
+    <div class="paragraph-container">
+      <p><strong>Total:</strong></p>
+      <p id="total"></p>
+    </div>
+    <div class="paragraph-container">
+      <p><strong>TVA:</strong></p>
+      <p id="tva"></p>
+    </div>
   </div>

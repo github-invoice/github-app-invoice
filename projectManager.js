@@ -523,7 +523,9 @@ class ProjectManager{
         });
         return data.sha;
       }catch (error) {
-        console.error('get sha Error:', error.message);
+        if(!error instanceof NotFoundError){
+          console.error('get sha Error:', error.message);
+        }
         return undefined;
       };
     }
