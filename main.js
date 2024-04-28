@@ -6,22 +6,6 @@ const InvoiceManager = require('./invoiceManager');
 const ProjectManager = require('./projectManager');
 const dotenv = require('dotenv');
 
-const octokit = new Octokit({
-    auth: dotenv.config().parsed.GITHUB_TOKEN,
-});
-
-// test
-async function fetchUserInfo() {
-  try {
-    const { data } = await octokit.users.getAuthenticated();
-    console.log('Authenticated user:', data);
-  } catch (error) {
-    console.error('Error:', error.message);
-  }
-}
-
-// fetchUserInfo();
-
 const app = express();
 
 const GithubEvents = {
@@ -40,6 +24,11 @@ app.post('/webhook', express.json({type: 'application/json'}), async (request, r
   response.status(202).send('Accepted');
   const githubEvent = request.headers['x-github-event'];
   let payload = request.body;
+  const installationAccessToken = payload.installation.access_token;
+  const octokit = new Octokit({
+    auth: installationAccessToken
+});
+
   switch (githubEvent) {
     case GithubEvents.installationRepo:
     case GithubEvents.installation:
