@@ -8,6 +8,20 @@ const dotenv = require('dotenv');
 
 const app = express();
 
+async function getInstallationAccessToken(installationId) {
+  try {
+    const response = await octokit.request(
+      'POST /app/installations/{installation_id}/access_tokens', {
+      installation_id: installationId
+    });
+
+    return response.data.token;
+  } catch (error) {
+    console.error('Error fetching installation access token:', error);
+    throw error;
+  }
+}
+
 const GithubEvents = {
   installation: 'installation',
   installationRepo: 'installation_repositories',
@@ -20,20 +34,26 @@ const GithubEvents = {
   merge: 'merge',
 }
 
-app.post('/webhook', express.json({type: 'application/json'}), async (request, response) => {
+// TODO: handle uninstallation event for deletion of installationAccessToken
+// TODO: only accept requests from GitHub
+// TODO: all requests should be authenticated with octokit and get token from database
+app.post('/invoice', express.json({type: 'application/json'}), async (request, response) => {
   response.status(202).send('Accepted');
   const githubEvent = request.headers['x-github-event'];
   let payload = request.body;
-  const installationAccessToken = payload.installation.access_token;
   const octokit = new Octokit({
     auth: installationAccessToken
-});
+  });
 
   switch (githubEvent) {
     case GithubEvents.installationRepo:
     case GithubEvents.installation:
       if(payload.action !== 'created' && payload.action !== 'added' && payload.action !== 'unsuspend') return;
       try{
+        installationId = payload.installation.id;
+        const installationAccessToken = await getInstallationAccessToken(installationId);
+        // TODO: store installationAccessToken in a secure location & installationId in a database
+
         const repositoriesAdded = payload.repositories_added;
         for (const repository of repositoriesAdded) {
           let owner = payload.installation.account.login;
