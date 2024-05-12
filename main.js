@@ -4,6 +4,7 @@ const InvoiceTemplate = require('./invoiceTemplate');
 const LabelTemplate = require('./labelTemplate');
 const InvoiceManager = require('./invoiceManager');
 const ProjectManager = require('./projectManager');
+const dbManager = require('./dbManager');
 const dotenv = require('dotenv');
 
 const app = express();

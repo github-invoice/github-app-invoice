@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: invoice-db-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: invoice-db-service
+spec:
+  selector:
+    app: invoice-db
+  ports:
+  - protocol: TCP
+    port: 6380
+    targetPort: 6380
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: invoice-db
+spec:
+  selector:
+    matchLabels:
+      app: invoice-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: invoice-db
+    spec:
+      volumes:
+        - name: invoice-db-conf
+          configMap:
+            name: invoice-db-conf
+      containers:
+        - name: invoice-db
+          image: redis:latest
+          command: ["redis-server"]
+          args: ["/app/redis.conf"]
+          ports:
+            - name: invoice-db-port
+              containerPort: 6380
+          volumeMounts:
+            - name: invoice-db-conf
+              mountPath: /app
+            - name: invoice-db-pvc
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: invoice-db-pvc
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
