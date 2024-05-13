@@ -11,3 +11,12 @@ This is an extension github to make github handle invoice for each agile project
 - on payment receive merge the fix issue into delivery (client) branch
 - each label has his own price
 - free label cancel the quote for the issue
+
+## Install
+1. install redis server
+create redis configMap using this command
+```kubectl create configmap invoice-db-conf --from-file=redis.conf```
+then add redis config file content using k9s on editing invoice-db-conf
+
+## Launch
+kubectl apply -f ./deployment.yaml
